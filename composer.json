@@ -1,0 +1,29 @@
+{
+    "name": "gouguoyin/easyhttp",
+    "description": "Laravel Log Viewer 提供了一个基于bootstrap搭建，完美适配PC、平板和移动端的日志查看后台，可自由配置访问路由、权限策略、中间件、导航链接，支持多语言和日志搜索、下载、删除",
+    "license": "MIT",
+    "keywords": ["php-http", "log-reader", "logs-viewer", "logs-reader", "laravel-log-viewer", "laravel-log-reader", "laravel-logs-viewer", "laravel-logs-reader", "laravel"],
+    "type": "package",
+    "authors": [
+        {
+            "name": "gouguoyin",
+            "email": "245629560@qq.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.0",
+        "guzzlehttp/guzzle": "~6.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "Gouguoyin\\EasyHttp\\": "src/"
+        }
+    },
+    "minimum-stability": "stable",
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://mirrors.aliyun.com/composer/"
+        }
+    ]
+}
