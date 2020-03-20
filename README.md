@@ -40,10 +40,10 @@ $response = Http::head('http://httpbin.org/head');
 ###### 发送 URL 编码的请求(默认是JSON请求)
 
 ```php
-// application/x-www-form-urlencoded
+// application/json
 $response = Http::asJson()->post(...);
 
-// application/json
+// application/x-www-form-urlencoded
 $response = Http::asForm()->post(...);
 ```
 
@@ -59,7 +59,7 @@ $response = Http::attach(
 
 ```php
 $response = Http::withHeaders([
-    'X-First' => 'foo',
+    'X-First'  => 'foo',
     'X-Second' => 'bar'
 ])->post(...);
 ```
