@@ -3,11 +3,18 @@
 namespace Gouguoyin\EasyHttp;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Pool;
 use GuzzleHttp\Cookie\CookieJar;
 use GuzzleHttp\Exception\ConnectException;
 
 class Request
 {
+    /**
+     * 单例
+     * @var array
+     */
+    private static $instances = [];
+
     /**
      * \GuzzleHttp\Client;
      * @var Client
@@ -15,6 +22,7 @@ class Request
     protected $client;
 
     /**
+     * Body格式
      * @var string
      */
     protected $bodyFormat;
@@ -25,36 +33,60 @@ class Request
     protected $options = [];
 
     /**
+     * 重试次数
      * @var int
      */
     protected $tries = 1;
 
+    /**
+     * 并发次数
+     * @var
+     */
+    protected $concurrency;
+
+    /**
+     * Request constructor.
+     */
     public function __construct()
     {
-        $this->client  = new Client();
+        $this->client = $this->getInstance();
+
         $this->bodyFormat = 'json';
-        $this->options = [
+        $this->options    = [
             'http_errors' => false,
         ];
     }
 
-    public function withoutRedirecting()
+    public function getInstance()
     {
-        $this->options['allow_redirects'] = false;
+        $name = get_called_class();
+
+        if (!isset(self::$instances[$name])) {
+            self::$instances[$name] = new Client();
+        }
+
+        return self::$instances[$name];
+    }
+
+    public function asForm()
+    {
+        $this->bodyFormat = 'form_params';
+        $this->withHeaders(['Content-Type' => 'application/x-www-form-urlencoded']);
 
         return $this;
     }
 
-    public function withoutVerifying()
+    public function asJson()
     {
-        $this->options['verify'] = false;
+        $this->bodyFormat = 'json';
+        $this->withHeaders(['Content-Type' => 'application/json']);
 
         return $this;
     }
 
-    public function withoutStream()
+    public function withOptions(array $options)
     {
-        $this->options['stream'] = false;
+        $this->options = array_merge_recursive($this->options, $options);
 
         return $this;
     }
@@ -119,12 +151,40 @@ class Request
         return $this;
     }
 
+    public function withRedirect($redirect = false)
+    {
+        $this->options['allow_redirects'] = $redirect;
+
+        return $this;
+    }
+
+    public function withVerify($verify = false)
+    {
+        $this->options['verify'] = $verify;
+
+        return $this;
+    }
+
+    public function withStream(bool $boolean = false)
+    {
+        $this->options['stream'] = $boolean;
+
+        return $this;
+    }
+
     public function retry(int $times, int $sleep = 0)
     {
         return $this;
     }
 
-    public function delay($seconds)
+    public function concurrency(int $times)
+    {
+        $this->concurrency = $times;
+
+        return $this;
+    }
+
+    public function delay(int $seconds)
     {
         $this->options['delay'] = $seconds * 1000;
 
@@ -133,7 +193,7 @@ class Request
 
     public function timeout(int $seconds)
     {
-        $this->options['timeout'] = $seconds;
+        $this->options['timeout'] = $seconds * 1000;
 
         return $this;
     }
@@ -146,29 +206,6 @@ class Request
             'headers'  => $headers,
             'filename' => $filename,
         ]);
-
-        return $this;
-    }
-
-    public function asForm()
-    {
-        $this->bodyFormat = 'form_params';
-        $this->withHeaders(['Content-Type' => 'application/x-www-form-urlencoded']);
-
-        return $this;
-    }
-
-    public function asMultipart()
-    {
-        $this->bodyFormat = 'multipart';
-
-        return $this;
-    }
-
-    public function asJson()
-    {
-        $this->bodyFormat = 'json';
-        $this->withHeaders(['Content-Type' => 'application/json']);
 
         return $this;
     }
@@ -215,46 +252,84 @@ class Request
         return $this->request('HEAD', $url, $data);
     }
 
-    public function getAsync(string $url, array $query = [])
+    public function getAsync(string $url, array $query = [], callable $success = null, callable $fail = null)
     {
         $this->options['query'] = $query;
 
-        return $this->requestAsync('GET', $url, $query);
+        return $this->requestAsync('GET', $url, $query, $success, $fail);
     }
 
-    public function postAsync(string $url, array $data = [])
+    public function postAsync(string $url, array $data = [], callable $success = null, callable $fail = null)
     {
         $this->options[$this->bodyFormat] = $data;
 
-        return $this->requestAsync('POST', $url, $data);
+        return $this->requestAsync('POST', $url, $data, $success, $fail)->wait();
     }
 
-    public function patchAsync(string $url, array $data = [])
+    public function patchAsync(string $url, array $data = [], callable $success = null, callable $fail = null)
     {
         $this->options[$this->bodyFormat] = $data;
 
-        return $this->requestAsync('PATCH', $url, $data);
+        return $this->requestAsync('PATCH', $url, $data, $success, $fail)->wait();
     }
 
-    public function putAsync(string $url, array $data = [])
+    public function putAsync(string $url, array $data = [], callable $success = null, callable $fail = null)
     {
         $this->options[$this->bodyFormat] = $data;
 
-        return $this->requestAsync('PUT', $url, $data);
+        return $this->requestAsync('PUT', $url, $data, $success, $fail)->wait();
     }
 
-    public function deleteAsync(string $url, array $data = [])
+    public function deleteAsync(string $url, array $data = [], callable $success = null, callable $fail = null)
     {
         $this->options[$this->bodyFormat] = $data;
 
-        return $this->requestAsync('DELETE', $url, $data);
+        return $this->requestAsync('DELETE', $url, $data, $success, $fail)->wait();
     }
 
-    public function headAsync(string $url, array $data = [])
+    public function headAsync(string $url, array $data = [], callable $success = null, callable $fail = null)
     {
         $this->options[$this->bodyFormat] = $data;
 
-        return $this->requestAsync('HEAD', $url, $data);
+        return $this->requestAsync('HEAD', $url, $data, $success, $fail)->wait();
+    }
+
+    public function promise(array $promises, callable $success = null, callable $fail = null)
+    {
+        $count = count($promises);
+
+        $this->concurrency = $this->concurrency ? : $count;
+
+        $fulfilled = function ($response, $index) use ($success){
+            if ($success) {
+                $response = $this->response($response);
+                call_user_func_array($success, [$response, $index]);
+            }
+        };
+
+        $rejected = function ($exception, $index) use ($fail){
+            if ($fail) {
+                $exception = $this->exception($exception);
+                call_user_func_array($fail, [$exception, $index]);
+            }
+        };
+
+        $requests = function () use ($promises) {
+            foreach ($promises as $promise) {
+                yield function() use ($promise) {
+                    return $promise;
+                };
+            }
+        };
+
+        $pool = new Pool($this->client, $requests($count), [
+            'concurrency' => $this->concurrency,
+            'fulfilled'   => $fulfilled,
+            'rejected'    => $rejected,
+        ]);
+
+        $promise = $pool->promise();
+        $promise->wait();
     }
 
     protected function request(string $method, string $url, array $options = [])
@@ -269,13 +344,31 @@ class Request
         }
     }
 
-    protected function requestAsync(string $method, string $url, array $options = [])
+    protected function requestAsync(string $method, string $url, array $options = [], callable $success = null, callable $fail = null)
     {
         isset($this->options[$this->bodyFormat]) && $this->options[$this->bodyFormat] = $options;
 
         try {
             $promise = $this->client->requestAsync($method, $url, $this->options);
-            return $this->response($promise);
+
+            $fulfilled = function ($response) use ($success){
+                if ($success) {
+                    $response = $this->response($response);
+                    call_user_func_array($success, [$response]);
+                }
+            };
+
+            $rejected = function ($exception) use ($fail){
+                if ($fail) {
+                    $exception = $this->exception($exception);
+                    call_user_func_array($fail, [$exception]);
+                }
+            };
+
+            $promise->then($fulfilled, $rejected);
+
+            return $promise;
+
         } catch (ConnectException $e) {
             throw new ConnectionException($e->getMessage(), 0, $e);
         }
@@ -286,4 +379,8 @@ class Request
         return new Response($response);
     }
 
+    protected function exception($exception)
+    {
+        return new RequestException($exception);
+    }
 }

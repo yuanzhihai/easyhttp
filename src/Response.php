@@ -31,13 +31,26 @@ class Response implements ArrayAccess
     }
 
     /**
-     * Get the JSON decoded body of the response.
+     * Get the Array decoded body of the response.
      * @return array|mixed
+     */
+    public function array()
+    {
+        if (!$this->decoded) {
+            $this->decoded = json_decode((string) $this->response->getBody(), true);
+        }
+
+        return $this->decoded;
+    }
+
+    /**
+     * Get the JSON decoded body of the response.
+     * @return object|mixed
      */
     public function json()
     {
         if (!$this->decoded) {
-            $this->decoded = json_decode((string) $this->response->getBody(), true);
+            $this->decoded = json_decode((string) $this->response->getBody());
         }
 
         return $this->decoded;
@@ -118,42 +131,6 @@ class Response implements ArrayAccess
         return $this->status() >= 500;
     }
 
-    public function then(callable $onFulfilled = null, callable $onRejected = null)
-    {
-        $this->response->then($onFulfilled, $onRejected);
-
-        return $this;
-    }
-
-    public function wait($unwrap = true)
-    {
-        return $this->response->wait($unwrap);
-    }
-
-    public function cancel()
-    {
-        return $this->response->cancel();
-    }
-
-    public function resolve($value)
-    {
-        return $this->response->resolve($value);
-    }
-
-    public function reject($reason)
-    {
-        return $this->response->reject($reason);
-    }
-
-    /**
-     * Get the underlying PSR response for the response.
-     * @return mixed
-     */
-    public function toPsrResponse()
-    {
-        return $this->response;
-    }
-
     /**
      * Throw an exception if a server or client error occurred.
      * @return $this
@@ -162,7 +139,7 @@ class Response implements ArrayAccess
     public function throw()
     {
         if ($this->serverError() || $this->clientError()) {
-            throw new LogicException("888 HTTP request returned status code {$this->status()}.");
+            throw new ConnectionException("HTTP request returned status code {$this->status()}.", $this->status());
         }
 
         return $this;

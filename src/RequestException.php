@@ -2,27 +2,38 @@
 
 namespace Gouguoyin\EasyHttp;
 
-use Exception;
-
-class RequestException extends Exception
+class RequestException
 {
-    /**
-     * The response instance.
-     *
-     * @var \Illuminate\Http\Client\Response
-     */
-    public $response;
+    public $exception;
 
-    /**
-     * Create a new exception instance.
-     *
-     * @param  \Illuminate\Http\Client\Response  $response
-     * @return void
-     */
-    public function __construct(Response $response)
+    public function __construct($exception)
     {
-        parent::__construct("999 HTTP request returned status code {$response->status()}.", $response->status());
+        $this->exception = $exception;
+    }
 
-        $this->response = $response;
+    public function getCode()
+    {
+        return $this->exception->getCode();
+    }
+
+    public function getMessage()
+    {
+        return $this->exception->getMessage();
+    }
+
+    public function getLine()
+    {
+        return $this->exception->getLine();
+    }
+
+    public function getTrace()
+    {
+        return $this->exception->getTrace();
+    }
+
+    public function getTraceAsString()
+    {
+        return $this->exception->getTraceAsString();
     }
 }
+
