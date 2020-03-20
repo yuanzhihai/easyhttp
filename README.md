@@ -68,15 +68,13 @@ $response = Http::withHeaders([
 // 默认
 $response = Http::withRedirect(false)->post(...);
 
-$response = Http::withRedirect(
-    [
-        'max'             => 5,
-        'strict'          => false,
-        'referer'         => true,
-        'protocols'       => ['http', 'https'],
-        'track_redirects' => false
-    ]
-)->post(...);
+$response = Http::withRedirect([
+    'max'             => 5,
+    'strict'          => false,
+    'referer'         => true,
+    'protocols'       => ['http', 'https'],
+    'track_redirects' => false
+])->post(...);
 ```
 
 ###### 携带认证的请求
