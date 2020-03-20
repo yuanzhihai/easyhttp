@@ -158,23 +158,21 @@ $response = Http::concurrency(10)->post(...);
 use Gouguoyin\EasyHttp\Response;
 use Gouguoyin\EasyHttp\RequestException;
 
-Http::getAsync('http://httpbin.org/get');
-
-Http::postAsync('http://httpbin.org/post');
-
-Http::patchAsync('http://httpbin.org/patch');
-
-Http::putAsync('http://httpbin.org/put');
-
-Http::deleteAsync('http://httpbin.org/delete');
-
-Http::headAsync('http://httpbin.org/head');
-
 Http::getAsync('http://easyhttp.gouguoyin.cn/api/sleep3.json', [], function (Response $response) {
     echo $response->body() . PHP_EOL;
 }, function (RequestException $e) {
     echo '请求异常，错误码：' . $e->getCode() . '，错误信息：' . $e->getMessage() .  PHP_EOL;
 });
+
+Http::postAsync(...);
+
+Http::patchAsync(...);
+
+Http::putAsync(...);
+
+Http::deleteAsync(...);
+
+Http::headAsync(...);
 ```
 
 #### 并发请求
