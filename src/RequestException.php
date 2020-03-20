@@ -21,6 +21,11 @@ class RequestException
         return $this->exception->getMessage();
     }
 
+    public function getFile()
+    {
+        return $this->exception->getFile();
+    }
+
     public function getLine()
     {
         return $this->exception->getLine();
@@ -36,4 +41,3 @@ class RequestException
         return $this->exception->getTraceAsString();
     }
 }
-

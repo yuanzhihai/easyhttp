@@ -203,7 +203,7 @@ echo "当前页面执行总时长：{$total} 秒" . PHP_EOL;
 
 ## 使用响应
 
-发起请求后会返回一个 Gouguoyin\EasyHttp\Response 的实例，该实例提供了大量的方法来检查请求的响应：
+发起请求后会返回一个 Gouguoyin\EasyHttp\Response 的实例，该实例提供了以下方法来检查请求的响应：
 
 ```php
 $response->body() : string;
@@ -220,3 +220,24 @@ $response->headers() : array;
 
 ## 异常处理
 
+请求在发生客户端或服务端错误时会抛出 Gouguoyin\EasyHttp\RequestException 异常，你可以在请求实例上调用 throw 方法：
+
+```php
+$response = Http::post(...);
+
+// 在客户端或服务端错误发生时抛出异常
+$response->throw();
+
+return $response['user']['id'];
+```
+
+Gouguoyin\EasyHttp\RequestException 提供了以下方法来返回异常信息：
+
+```php
+$response->getCode() : int;
+$response->getMessage() : string;
+$response->getFile() : string;
+$response->getLine() : int;
+$response->getTrace() : array;
+$response->getTraceAsString() : string;
+```
