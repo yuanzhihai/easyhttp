@@ -83,7 +83,7 @@ $response = Http::withRedirect([
 // Basic 认证
 $response = Http::withBasicAuth('username', 'password')->post(...);
 
-// Digest 认证(必须被HTTP处理器支持)
+// Digest 认证(必须被HTTP服务器支持)
 $response = Http::withDigestAuth('username', 'password')->post(...);
 ```
 
@@ -159,9 +159,9 @@ use Gouguoyin\EasyHttp\Response;
 use Gouguoyin\EasyHttp\RequestException;
 
 Http::getAsync('http://easyhttp.gouguoyin.cn/api/sleep3.json', [], function (Response $response) {
-    echo $response->body() . PHP_EOL;
+    echo '请求成功，返回内容：' . $response->body() . PHP_EOL;
 }, function (RequestException $e) {
-    echo '请求异常，错误码：' . $e->getCode() . '，错误信息：' . $e->getMessage() .  PHP_EOL;
+    echo '请求异常，错误码：' . $e->getCode() . '，错误信息：' . $e->getMessage() . PHP_EOL;
 });
 
 Http::postAsync(...);
@@ -192,7 +192,7 @@ $promises = [
 Http::concurrency(10)->promise($promises, function (Response $response, $index) {
     echo "发起第 $index 个请求，请求时长：" . $response->json()->second . '秒' . PHP_EOL;
 }, function (RequestException $e) {
-    echo '请求异常，错误码：' . $e->getCode() . '，错误信息：' . $e->getMessage() .  PHP_EOL;
+    echo '请求异常，错误码：' . $e->getCode() . '，错误信息：' . $e->getMessage() . PHP_EOL;
 });
 
 $etime = microtime(true);
