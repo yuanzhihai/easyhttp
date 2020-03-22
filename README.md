@@ -56,7 +56,7 @@ $response = Http::attach(
     'input_name', fopen('photo1.jpg', 'r'), 'photo2.jpg'
 )->post('http://test.com/attachments');
 ```
-> 表单enctype属性需要设置 multipart/form-data
+> 表单enctype属性需要设置成 multipart/form-data
 
 ###### 携带请求头的请求
 
