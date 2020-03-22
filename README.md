@@ -87,7 +87,7 @@ $response = Http::withRedirect([
 // Basic 认证
 $response = Http::withBasicAuth('username', 'password')->post(...);
 
-// Digest 认证(必须被HTTP服务器支持)
+// Digest 认证(需要被HTTP服务器支持)
 $response = Http::withDigestAuth('username', 'password')->post(...);
 ```
 
