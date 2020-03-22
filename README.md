@@ -134,7 +134,7 @@ $response = Http::withCookies(array $cookies, string $domain)->post(...);
 $response = Http::withVersion(1.0)->post(...);
 ```
 
-###### 使用代理的请求
+###### 携带代理的请求
 
 ```php
 $response = Http::withProxy('tcp://localhost:8125')->post(...);
