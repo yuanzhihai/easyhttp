@@ -50,19 +50,19 @@ $response = Http::asForm()->post(...);
 ###### 发送 Multipart 请求
 
 ```php
-$response = Http::attach(
+$response = Http::asMultipart(
     'input_name', file_get_contents('photo1.jpg'), 'photo2.jpg'
 )->post('http://test.com/attachments');
 
-$response = Http::attach(
+$response = Http::asMultipart(
     'input_name', fopen('photo1.jpg', 'r'), 'photo2.jpg'
 )->post('http://test.com/attachments');
 
-$response = Http::asMultipart(
+$response = Http::attach(
     'input_name', file_get_contents('photo1.jpg'), 'photo2.jpg'
 )->post('http://test.com/attachments');
 
-$response = Http::asMultipart(
+$response = Http::attach(
     'input_name', fopen('photo1.jpg', 'r'), 'photo2.jpg'
 )->post('http://test.com/attachments');
 ```
