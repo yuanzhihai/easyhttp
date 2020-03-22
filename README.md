@@ -94,10 +94,10 @@ $response = Http::withRedirect([
 ###### 携带认证的请求
 
 ```php
-// Basic 认证
+// Basic认证
 $response = Http::withBasicAuth('username', 'password')->post(...);
 
-// Digest 认证(需要被HTTP服务器支持)
+// Digest认证(需要被HTTP服务器支持)
 $response = Http::withDigestAuth('username', 'password')->post(...);
 ```
 
