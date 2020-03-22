@@ -129,13 +129,11 @@ $response = Http::withVersion(1.0)->post(...);
 ```php
 $response = Http::withProxy('tcp://localhost:8125')->post(...);
 
-$response = Http::withProxy(
-    [
-        'http'  => 'tcp://localhost:8125', // Use this proxy with "http"
-        'https' => 'tcp://localhost:9124', // Use this proxy with "https",
-        'no' => ['.com.cn', 'gouguoyin.cn']    // Don't use a proxy with these
-    ]
-)->post(...);
+$response = Http::withProxy([
+    'http'  => 'tcp://localhost:8125', // Use this proxy with "http"
+    'https' => 'tcp://localhost:9124', // Use this proxy with "https",
+    'no' => ['.com.cn', 'gouguoyin.cn']    // Don't use a proxy with these
+])->post(...);
 ```
 
 ###### 设置超时时间(单位秒)
