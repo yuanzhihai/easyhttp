@@ -37,7 +37,7 @@ $response = Http::head('http://httpbin.org/head');
 $response = Http::options('http://httpbin.org/options');
 ```
 
-###### 发送 URL 编码请求
+###### 发送 Content-Type 编码请求
 
 ```php
 // application/json(默认)
