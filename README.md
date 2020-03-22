@@ -228,7 +228,7 @@ echo "当前页面执行总时长：{$total} 秒" . PHP_EOL;
 
 ## 使用响应
 
-发起请求后会返回一个 Gouguoyin\EasyHttp\Response 的实例，该实例提供了以下方法来检查请求的响应：
+发起请求后会返回一个 Gouguoyin\EasyHttp\Response $response的实例，该实例提供了以下方法来检查请求的响应：
 
 ```php
 $response->body() : string;
