@@ -62,7 +62,7 @@ $response = Http::attach(
 
 ```php
 $response = Http::withHeaders([
-    'x-powered-by' => 'gouguoyin',
+    'x-powered-by' => 'gouguoyin'
 ])->post(...);
 ```
 
@@ -121,7 +121,7 @@ $response = Http::withCookies(array $cookies, string $domain)->post(...);
 ###### 携带协议版本的请求
 
 ```php
-$response = Http::withVersion('1.0')->post(...);
+$response = Http::withVersion(1.0)->post(...);
 ```
 
 ###### 使用代理的请求
@@ -200,7 +200,7 @@ Http::concurrency(10)->promise($promises, function (Response $response, $index) 
 });
 
 $etime = microtime(true);
-$total = floor($etime-$stime);
+$total = floor($etime - $stime);
 echo "当前页面执行总时长：{$total} 秒" . PHP_EOL;
 
 //输出
