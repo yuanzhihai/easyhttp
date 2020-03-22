@@ -47,7 +47,7 @@ $response = Http::asJson()->post(...);
 $response = Http::asForm()->post(...);
 ```
 
-###### 发送 Multipart 请求
+###### 发送 Multipart 表单请求
 
 ```php
 $response = Http::asMultipart(
