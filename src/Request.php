@@ -245,6 +245,13 @@ class Request
         return $this->request('HEAD', $url, $data);
     }
 
+    public function options(string $url, array $data = [])
+    {
+        $this->options[$this->bodyFormat] = $data;
+
+        return $this->request('OPTIONS', $url, $data);
+    }
+
     public function getAsync(string $url, array $query = [], callable $success = null, callable $fail = null)
     {
         $this->options['query'] = $query;
@@ -285,6 +292,13 @@ class Request
         $this->options[$this->bodyFormat] = $data;
 
         return $this->requestAsync('HEAD', $url, $data, $success, $fail)->wait();
+    }
+
+    public function optionsAsync(string $url, array $data = [], callable $success = null, callable $fail = null)
+    {
+        $this->options[$this->bodyFormat] = $data;
+
+        return $this->requestAsync('OPTIONS', $url, $data, $success, $fail)->wait();
     }
 
     public function promise(array $promises, callable $success = null, callable $fail = null)
