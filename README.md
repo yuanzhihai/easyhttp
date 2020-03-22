@@ -234,8 +234,8 @@ $response->ok() : bool;
 $response->successful() : bool;
 $response->serverError() : bool;
 $response->clientError() : bool;
-$response->header($header) : string;
 $response->headers() : array;
+$response->header($header) : string;
 ```
 
 ## 异常处理
