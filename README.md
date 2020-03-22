@@ -62,8 +62,7 @@ $response = Http::attach(
 
 ```php
 $response = Http::withHeaders([
-    'X-First'  => 'foo',
-    'X-Second' => 'bar'
+    'x-powered-by'  => 'gouguoyin',
 ])->post(...);
 ```
 
