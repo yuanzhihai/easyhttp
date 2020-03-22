@@ -33,6 +33,8 @@ $response = Http::put('http://httpbin.org/put');
 $response = Http::delete('http://httpbin.org/delete');
 
 $response = Http::head('http://httpbin.org/head');
+
+$response = Http::options('http://httpbin.org/options');
 ```
 
 ###### 发送 URL 编码的请求
@@ -53,6 +55,14 @@ $response = Http::attach(
 )->post('http://test.com/attachments');
 
 $response = Http::attach(
+    'input_name', fopen('photo1.jpg', 'r'), 'photo2.jpg'
+)->post('http://test.com/attachments');
+
+$response = Http::asMultipart(
+    'input_name', file_get_contents('photo1.jpg'), 'photo2.jpg'
+)->post('http://test.com/attachments');
+
+$response = Http::asMultipart(
     'input_name', fopen('photo1.jpg', 'r'), 'photo2.jpg'
 )->post('http://test.com/attachments');
 ```
@@ -175,6 +185,8 @@ Http::putAsync(...);
 Http::deleteAsync(...);
 
 Http::headAsync(...);
+
+Http::optionsAsync(...);
 ```
 
 #### 并发请求

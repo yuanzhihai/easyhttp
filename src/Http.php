@@ -5,6 +5,7 @@ namespace Gouguoyin\EasyHttp;
 /**
  * @method static \Gouguoyin\EasyHttp\Request asJson()
  * @method static \Gouguoyin\EasyHttp\Request asForm()
+ * @method static \Gouguoyin\EasyHttp\Request asMultipart(string $name, string $contents, string|null $filename = null, array $headers)
  * @method static \Gouguoyin\EasyHttp\Request attach(string $name, string $contents, string|null $filename = null, array $headers)
  *
  * @method static \Gouguoyin\EasyHttp\Request withRedirect(bool|array $redirect)

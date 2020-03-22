@@ -74,6 +74,20 @@ class Request
         return $this;
     }
 
+    public function asMultipart(string $name, string $contents, string $filename = null, array $headers = [])
+    {
+        $this->bodyFormat = 'multipart';
+
+        $this->options = array_filter([
+            'name'     => $name,
+            'contents' => $contents,
+            'headers'  => $headers,
+            'filename' => $filename,
+        ]);
+
+        return $this;
+    }
+
     public function asJson()
     {
         $this->bodyFormat = 'json';
