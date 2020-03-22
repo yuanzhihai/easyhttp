@@ -161,8 +161,9 @@ $response = Http::delay(60)->post(...);
 ###### 设置并发次数
 
 ```php
-$response = Http::concurrency(10)->post(...);
+$response = Http::concurrency(10)->promise(...);
 ```
+> 此方法仅在并发请求时生效
 
 #### 异步请求
 
