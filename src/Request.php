@@ -10,7 +10,7 @@ use GuzzleHttp\Exception\ConnectException;
 class Request
 {
     /**
-     * 单例
+     * \GuzzleHttp\Client单例
      * @var array
      */
     private static $instances = [];
@@ -33,12 +33,6 @@ class Request
     protected $options = [];
 
     /**
-     * 重试次数
-     * @var int
-     */
-    protected $tries = 1;
-
-    /**
      * 并发次数
      * @var
      */
@@ -57,6 +51,10 @@ class Request
         ];
     }
 
+    /**
+     * 获取单例
+     * @return mixed
+     */
     public function getInstance()
     {
         $name = get_called_class();
@@ -165,15 +163,10 @@ class Request
         return $this;
     }
 
-    public function withStream(bool $boolean = false)
+    public function withStream($boolean = false)
     {
         $this->options['stream'] = $boolean;
 
-        return $this;
-    }
-
-    public function retry(int $times, int $sleep = 0)
-    {
         return $this;
     }
 
