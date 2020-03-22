@@ -35,10 +35,10 @@ $response = Http::delete('http://httpbin.org/delete');
 $response = Http::head('http://httpbin.org/head');
 ```
 
-###### 发送 URL 编码的请求(默认是JSON请求)
+###### 发送 URL 编码的请求
 
 ```php
-// application/json
+// application/json(默认)
 $response = Http::asJson()->post(...);
 
 // application/x-www-form-urlencoded
