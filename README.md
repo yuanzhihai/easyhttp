@@ -51,6 +51,10 @@ $response = Http::asForm()->post(...);
 $response = Http::attach(
     'input_name', file_get_contents('photo1.jpg'), 'photo2.jpg'
 )->post('http://test.com/attachments');
+
+$response = Http::attach(
+    'input_name', fopen('photo1.jpg', 'r'), 'photo2.jpg'
+)->post('http://test.com/attachments');
 ```
 > 表单enctype属性需要设置 multipart/form-data
 
