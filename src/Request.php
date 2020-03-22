@@ -74,6 +74,14 @@ class Request
         return $this;
     }
 
+    public function asJson()
+    {
+        $this->bodyFormat = 'json';
+        $this->withHeaders(['Content-Type' => 'application/json']);
+
+        return $this;
+    }
+
     public function asMultipart(string $name, string $contents, string $filename = null, array $headers = [])
     {
         $this->bodyFormat = 'multipart';
@@ -84,14 +92,6 @@ class Request
             'headers'  => $headers,
             'filename' => $filename,
         ]);
-
-        return $this;
-    }
-
-    public function asJson()
-    {
-        $this->bodyFormat = 'json';
-        $this->withHeaders(['Content-Type' => 'application/json']);
 
         return $this;
     }
