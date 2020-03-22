@@ -251,13 +251,13 @@ $response->throw();
 return $response['user']['id'];
 ```
 
-Gouguoyin\EasyHttp\RequestException 提供了以下方法来返回异常信息：
+Gouguoyin\EasyHttp\RequestException $e 提供了以下方法来返回异常信息：
 
 ```php
-$response->getCode() : int;
-$response->getMessage() : string;
-$response->getFile() : string;
-$response->getLine() : int;
-$response->getTrace() : array;
-$response->getTraceAsString() : string;
+$e->getCode() : int;
+$e->getMessage() : string;
+$e->getFile() : string;
+$e->getLine() : int;
+$e->getTrace() : array;
+$e->getTraceAsString() : string;
 ```
