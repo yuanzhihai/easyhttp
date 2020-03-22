@@ -207,7 +207,7 @@ echo "当前页面执行总时长：{$total} 秒" . PHP_EOL;
 发起第 0 个请求，请求时长：3 秒
 当前页面执行总时长：3 秒
 ```
-> 如果为未设置concurrency，并发次数默认为$promises的元素个数
+> 如果未调用concurrency()方法，并发次数默认为$promises的元素个数
 
 ## 使用响应
 
