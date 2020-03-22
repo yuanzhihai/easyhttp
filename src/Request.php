@@ -133,9 +133,16 @@ class Request
         return $this;
     }
 
+    public function withUA(string $ua)
+    {
+        $this->options['headers']['User-Agent'] = trim($ua);
+
+        return $this;
+    }
+
     public function withToken(string $token, string $type = 'Bearer')
     {
-        $this->options['headers']['Authorization'] = trim($type.' '.$token);
+        $this->options['headers']['Authorization'] = trim($type . ' ' . $token);
 
         return $this;
     }

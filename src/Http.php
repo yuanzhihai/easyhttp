@@ -14,6 +14,7 @@ namespace Gouguoyin\EasyHttp;
  * @method static \Gouguoyin\EasyHttp\Request withHeaders(array $headers)
  * @method static \Gouguoyin\EasyHttp\Request withBasicAuth(string $username, string $password)
  * @method static \Gouguoyin\EasyHttp\Request withDigestAuth(string $username, string $password)
+ * @method static \Gouguoyin\EasyHttp\Request withUA(string $ua)
  * @method static \Gouguoyin\EasyHttp\Request withToken(string $token, string $type = 'Bearer')
  * @method static \Gouguoyin\EasyHttp\Request withCookies(array $cookies, string $domain)
  * @method static \Gouguoyin\EasyHttp\Request withProxy(string|array $proxy)

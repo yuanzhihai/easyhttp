@@ -37,7 +37,7 @@ $response = Http::head('http://httpbin.org/head');
 $response = Http::options('http://httpbin.org/options');
 ```
 
-###### 发送 URL 编码的请求
+###### 发送 URL 编码请求
 
 ```php
 // application/json(默认)
@@ -99,6 +99,11 @@ $response = Http::withBasicAuth('username', 'password')->post(...);
 
 // Digest认证(需要被HTTP服务器支持)
 $response = Http::withDigestAuth('username', 'password')->post(...);
+```
+
+###### 携带 User-Agent 的请求
+```php
+$response = Http::withUA('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3100.0 Safari/537.36')->post(...);
 ```
 
 ###### 携带Token令牌的请求
@@ -163,7 +168,6 @@ $response = Http::delay(60)->post(...);
 ```php
 $response = Http::concurrency(10)->promise(...);
 ```
-> 此方法仅在并发请求时生效
 
 #### 异步请求
 
