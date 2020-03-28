@@ -272,7 +272,7 @@ $e->getLine() : int;
 $e->getTrace() : array;
 $e->getTraceAsString() : string;
 ```
-
+## 更新日志
 ### 2020-03-28
 * 修复部分情况下IDE不能智能提示的BUG
 * get()、getAsync()方法支持带参数的url
