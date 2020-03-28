@@ -2,7 +2,6 @@ EasyHttp 是一个轻量级、语义化、对IDE友好的HTTP客户端，支持�
 
 > EasyHttp并不强制依赖于cURL，如果没有安装cURL，EasyHttp会自动选择使用PHP流处理，或者你也可以提供自己的发送HTTP请求的处理方式。
 
-<a name="installation"></a>
 ## 安装说明
 
 #### 环境依赖
@@ -57,19 +56,19 @@ $response = Http::asForm()->post(...);
 
 ```php
 $response = Http::asMultipart(
-    'input_name', file_get_contents('photo1.jpg'), 'photo2.jpg'
+    'file_input_name', file_get_contents('photo1.jpg'), 'photo2.jpg'
 )->post('http://test.com/attachments');
 
 $response = Http::asMultipart(
-    'input_name', fopen('photo1.jpg', 'r'), 'photo2.jpg'
+    'file_input_name', fopen('photo1.jpg', 'r'), 'photo2.jpg'
 )->post(...);
 
 $response = Http::attach(
-    'input_name', file_get_contents('photo1.jpg'), 'photo2.jpg'
+    'file_input_name', file_get_contents('photo1.jpg'), 'photo2.jpg'
 )->post(...);
 
 $response = Http::attach(
-    'input_name', fopen('photo1.jpg', 'r'), 'photo2.jpg'
+    'file_input_name', fopen('photo1.jpg', 'r'), 'photo2.jpg'
 )->post('http://test.com/attachments');
 ```
 > 表单enctype属性需要设置成 multipart/form-data
