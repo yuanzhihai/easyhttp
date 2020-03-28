@@ -21,7 +21,7 @@ namespace Gouguoyin\EasyHttp;
  * @method static \Gouguoyin\EasyHttp\Request withVersion(string $version)
  * @method static \Gouguoyin\EasyHttp\Request withOptions(array $options)
  *
- * @method static \Gouguoyin\EasyHttp\Request retry(int $times, int $sleep = 0)
+ * @method static \Gouguoyin\EasyHttp\Request delay(int $seconds)
  * @method static \Gouguoyin\EasyHttp\Request timeout(int $seconds)
  * @method static \Gouguoyin\EasyHttp\Request concurrency(int $times)
  * @method static \Gouguoyin\EasyHttp\Request promise(array $promises, callable $success = null, callable $fail = null)

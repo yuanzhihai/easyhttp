@@ -7,6 +7,20 @@ use GuzzleHttp\Pool;
 use GuzzleHttp\Cookie\CookieJar;
 use GuzzleHttp\Exception\ConnectException;
 
+/**
+* @method \Gouguoyin\EasyHttp\Response body()
+* @method \Gouguoyin\EasyHttp\Response array()
+* @method \Gouguoyin\EasyHttp\Response json()
+* @method \Gouguoyin\EasyHttp\Response headers()
+* @method \Gouguoyin\EasyHttp\Response header(string $header)
+* @method \Gouguoyin\EasyHttp\Response status()
+* @method \Gouguoyin\EasyHttp\Response successful()
+* @method \Gouguoyin\EasyHttp\Response ok()
+* @method \Gouguoyin\EasyHttp\Response redirect()
+* @method \Gouguoyin\EasyHttp\Response clientError()
+* @method \Gouguoyin\EasyHttp\Response serverError()
+* @method \Gouguoyin\EasyHttp\Response throw()
+*/
 class Request
 {
     /**
@@ -226,7 +240,9 @@ class Request
 
     public function get(string $url, array $query = [])
     {
-        $this->options['query'] = $query;
+        parse_str(parse_url($url, PHP_URL_QUERY), $result);
+
+        $this->options['query'] = array_merge($result, $query);
 
         return $this->request('GET', $url, $query);
     }
@@ -275,7 +291,9 @@ class Request
 
     public function getAsync(string $url, array $query = [], callable $success = null, callable $fail = null)
     {
-        $this->options['query'] = $query;
+        parse_str(parse_url($url, PHP_URL_QUERY), $result);
+
+        $this->options['query'] = array_merge($result, $query);
 
         return $this->requestAsync('GET', $url, $query, $success, $fail);
     }

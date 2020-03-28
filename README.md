@@ -24,17 +24,23 @@ EasyHttp 是一个轻量级、语义化、对IDE友好的HTTP客户端，支持�
 ```php
 $response = Http::get('http://httpbin.org/get');
 
+$response = Http::get('http://httpbin.org/get?name=gouguoyin');
+
+$response = Http::get('http://httpbin.org/get?name=gouguoyin', ['age' => 18]);
+
 $response = Http::post('http://httpbin.org/post');
 
-$response = Http::patch('http://httpbin.org/patch');
+$response = Http::post('http://httpbin.org/post', ['name' => 'gouguoyun']);
 
-$response = Http::put('http://httpbin.org/put');
+$response = Http::patch(...);
 
-$response = Http::delete('http://httpbin.org/delete');
+$response = Http::put(...);
 
-$response = Http::head('http://httpbin.org/head');
+$response = Http::delete(...);
 
-$response = Http::options('http://httpbin.org/options');
+$response = Http::head(...);
+
+$response = Http::options(...);
 ```
 
 ###### 发送 Content-Type 编码请求
@@ -56,11 +62,11 @@ $response = Http::asMultipart(
 
 $response = Http::asMultipart(
     'input_name', fopen('photo1.jpg', 'r'), 'photo2.jpg'
-)->post('http://test.com/attachments');
+)->post(...);
 
 $response = Http::attach(
     'input_name', file_get_contents('photo1.jpg'), 'photo2.jpg'
-)->post('http://test.com/attachments');
+)->post(...);
 
 $response = Http::attach(
     'input_name', fopen('photo1.jpg', 'r'), 'photo2.jpg'
@@ -266,3 +272,20 @@ $e->getLine() : int;
 $e->getTrace() : array;
 $e->getTraceAsString() : string;
 ```
+
+### 2020-03-28
+* 修复部分情况下IDE不能智能提示的BUG
+* get()、getAsync()方法支持带参数的url
+* 新增withUA()方法
+* 新增withStream()方法
+* 新增asMultipart()方法，是attach()的别名
+
+### 2020-03-20
+* 新增异步请求getAsync()方法
+* 新增异步请求postAsync()方法
+* 新增异步请求patchAsync()方法
+* 新增异步请求putAsync()方法
+* 新增异步请求deleteAsync()方法
+* 新增异步请求headAsync()方法
+* 新增异步请求optionsAsync()方法
+* 新增并发请求promise()方法
