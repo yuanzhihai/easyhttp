@@ -278,7 +278,7 @@ $e->getTraceAsString() : string;
 * get()、getAsync()方法支持带参数的url
 * 新增withUA()方法
 * 新增withStream()方法
-* 新增asMultipart()方法，是attach()的别名
+* 新增asMultipart()方法，attach()的别名
 
 ### 2020-03-20
 * 新增异步请求getAsync()方法
