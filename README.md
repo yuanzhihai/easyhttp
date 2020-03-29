@@ -286,3 +286,10 @@ $e->getTraceAsString() : string;
 * 新增异步请求headAsync()方法
 * 新增异步请求optionsAsync()方法
 * 新增并发请求promise()方法
+
+ **Todo List** 
+ - [x] 异步请求
+ - [x] 并发请求
+ - [ ] 重试机制
+ - [ ] 支持http2
+ - [ ] 支持swoole
