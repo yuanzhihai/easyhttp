@@ -185,6 +185,11 @@ Http::getAsync('http://easyhttp.gouguoyin.cn/api/sleep3.json', [], function (Res
 }, function (RequestException $e) {
     echo '请求异常，错误码：' . $e->getCode() . '，错误信息：' . $e->getMessage() . PHP_EOL;
 });
+echo json_encode(['code' => 200, 'msg' => '请求成功'], JSON_UNESCAPED_UNICODE) . PHP_EOL;
+
+//输出
+{"code":200,"msg":"请求成功"}
+异步请求成功，返回内容：{"code":200,"msg":"success","second":3}
 
 Http::postAsync(...);
 
