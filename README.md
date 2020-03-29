@@ -210,8 +210,6 @@ Http::optionsAsync(...);
 use Gouguoyin\EasyHttp\Response;
 use Gouguoyin\EasyHttp\RequestException;
 
-$stime = microtime(true);
-
 $promises = [
     Http::getAsync('http://easyhttp.gouguoyin.cn/api/sleep3.json'),
     Http::getAsync('http://easyhttp.gouguoyin.cn/api/sleep1.json'),
@@ -219,20 +217,15 @@ $promises = [
 ];
 
 Http::concurrency(10)->promise($promises, function (Response $response, $index) {
-    echo "发起第 $index 个请求，请求时长：" . $response->json()->second . '秒' . PHP_EOL;
+    echo "发起第 $index 个异步请求，请求时长：" . $response->json()->second . '秒' . PHP_EOL;
 }, function (RequestException $e) {
-    echo '请求异常，错误码：' . $e->getCode() . '，错误信息：' . $e->getMessage() . PHP_EOL;
+    echo '异步请求异常，错误码：' . $e->getCode() . '，错误信息：' . $e->getMessage() . PHP_EOL;
 });
-
-$etime = microtime(true);
-$total = floor($etime - $stime);
-echo "当前页面执行总时长：{$total} 秒" . PHP_EOL;
 
 //输出
 发起第 1 个请求，请求时长：1 秒
 发起第 2 个请求，请求时长：2 秒
 发起第 0 个请求，请求时长：3 秒
-当前页面执行总时长：3 秒
 ```
 > 如果未调用concurrency()方法，并发次数默认为$promises的元素个数
 
