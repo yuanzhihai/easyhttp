@@ -223,9 +223,9 @@ Http::concurrency(10)->promise($promises, function (Response $response, $index) 
 });
 
 //输出
-发起第 1 个请求，请求时长：1 秒
-发起第 2 个请求，请求时长：2 秒
-发起第 0 个请求，请求时长：3 秒
+发起第 1 个异步请求，请求时长：1 秒
+发起第 2 个异步请求，请求时长：2 秒
+发起第 0 个异步请求，请求时长：3 秒
 ```
 > 如果未调用concurrency()方法，并发次数默认为$promises的元素个数
 
