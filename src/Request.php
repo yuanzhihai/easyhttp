@@ -295,7 +295,7 @@ class Request
 
         $this->options['query'] = array_merge($result, $query);
 
-        return $this->requestAsync('GET', $url, $query, $success, $fail);
+        return $this->requestAsync('GET', $url, $query, $success, $fail)->wait();
     }
 
     public function postAsync(string $url, array $data = [], callable $success = null, callable $fail = null)
