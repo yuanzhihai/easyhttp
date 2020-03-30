@@ -45,11 +45,11 @@ $response = Http::options(...);
 ###### 发送 Content-Type 编码请求
 
 ```php
-// application/json(默认)
-$response = Http::asJson()->post(...);
-
-// application/x-www-form-urlencoded
+// application/x-www-form-urlencoded(默认)
 $response = Http::asForm()->post(...);
+
+// application/json
+$response = Http::asJson()->post(...);
 ```
 
 ###### 发送 Multipart 表单请求
