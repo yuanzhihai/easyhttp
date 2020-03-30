@@ -259,18 +259,7 @@ $response->header($header) : string;
 
 ## 异常处理
 
-请求在发生客户端或服务端错误时会抛出 Gouguoyin\EasyHttp\RequestException 异常，你可以在请求实例上调用 throw 方法：
-
-```php
-$response = Http::post(...);
-
-// 在客户端或服务端错误发生时抛出异常
-$response->throw();
-
-return $response['user']['id'];
-```
-
-Gouguoyin\EasyHttp\RequestException $e 提供了以下方法来返回异常信息：
+请求在发生客户端或服务端错误时会抛出 Gouguoyin\EasyHttp\RequestException $e异常，提供了以下方法来返回异常信息：
 
 ```php
 $e->getCode() : int;
@@ -281,12 +270,13 @@ $e->getTrace() : array;
 $e->getTraceAsString() : string;
 ```
 ## 更新日志
-### 2020-03-28
+### 2020-03-30
 * 修复部分情况下IDE不能智能提示的BUG
 * get()、getAsync()方法支持带参数的url
 * 新增withUA()方法
 * 新增withStream()方法
 * 新增asMultipart()方法，attach()的别名
+* 新增multiAsync()异步并发请求方法
 
 ### 2020-03-20
 * 新增异步请求getAsync()方法
@@ -296,7 +286,6 @@ $e->getTraceAsString() : string;
 * 新增异步请求deleteAsync()方法
 * 新增异步请求headAsync()方法
 * 新增异步请求optionsAsync()方法
-* 新增并发请求promise()方法
 
  **Todo List** 
  - [x] 异步请求
