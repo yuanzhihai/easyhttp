@@ -69,7 +69,7 @@ $response = Http::attach(
 
 $response = Http::attach(
     'file_input_name', fopen('photo1.jpg', 'r'), 'photo2.jpg'
-)->post('http://test.com/attachments');
+)->post(...);
 ```
 > 表单enctype属性需要设置成 multipart/form-data
 
@@ -141,7 +141,7 @@ $response = Http::withCookies(array $cookies, string $domain)->post(...);
 ###### 携带协议版本的请求
 
 ```php
-$response = Http::withVersion(1.0)->post(...);
+$response = Http::withVersion(1.1)->post(...);
 ```
 
 ###### 携带代理的请求
@@ -152,7 +152,7 @@ $response = Http::withProxy('tcp://localhost:8125')->post(...);
 $response = Http::withProxy([
     'http'  => 'tcp://localhost:8125', // Use this proxy with "http"
     'https' => 'tcp://localhost:9124', // Use this proxy with "https",
-    'no'    => ['.com.cn', 'gouguoyin.cn']    // Don't use a proxy with these
+    'no'    => ['.com.cn', 'gouguoyin.cn'] // Don't use a proxy with these
 ])->post(...);
 ```
 
@@ -259,7 +259,7 @@ $response->header($header) : string;
 
 ## 异常处理
 
-请求在发生客户端或服务端错误时会抛出 Gouguoyin\EasyHttp\RequestException $e异常，提供了以下方法来返回异常信息：
+请求在发生客户端或服务端错误时会抛出 Gouguoyin\EasyHttp\RequestException $e异常，该实例提供了以下方法来返回异常信息：
 
 ```php
 $e->getCode() : int;
