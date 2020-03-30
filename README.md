@@ -180,13 +180,22 @@ $response = Http::concurrency(10)->promise(...);
 use Gouguoyin\EasyHttp\Response;
 use Gouguoyin\EasyHttp\RequestException;
 
-Http::getAsync('http://easyhttp.gouguoyin.cn/api/sleep3.json', [], function (Response $response) {
+Http::getAsync('http://easyhttp.gouguoyin.cn/api/sleep3.json', function (Response $response) {
     echo '异步请求成功，返回内容：' . $response->body() . PHP_EOL;
 }, function (RequestException $e) {
     echo '异步请求异常，错误码：' . $e->getCode() . '，错误信息：' . $e->getMessage() . PHP_EOL;
 });
 echo json_encode(['code' => 200, 'msg' => '请求成功'], JSON_UNESCAPED_UNICODE) . PHP_EOL;
+//输出
+{"code":200,"msg":"请求成功"}
+异步请求成功，返回内容：{"code":200,"msg":"success","second":3}
 
+Http::getAsync('http://easyhttp.gouguoyin.cn/api/sleep3.json', ['token' => TOKEN], function (Response $response) {
+    echo '异步请求成功，返回内容：' . $response->body() . PHP_EOL;
+}, function (RequestException $e) {
+    echo '异步请求异常，错误码：' . $e->getCode() . '，错误信息：' . $e->getMessage() . PHP_EOL;
+});
+echo json_encode(['code' => 200, 'msg' => '请求成功'], JSON_UNESCAPED_UNICODE) . PHP_EOL;
 //输出
 {"code":200,"msg":"请求成功"}
 异步请求成功，返回内容：{"code":200,"msg":"success","second":3}
@@ -204,7 +213,7 @@ Http::headAsync(...);
 Http::optionsAsync(...);
 ```
 
-#### 并发请求
+#### 异步并发请求
 
 ```php
 use Gouguoyin\EasyHttp\Response;
@@ -216,7 +225,7 @@ $promises = [
     Http::getAsync('http://easyhttp.gouguoyin.cn/api/sleep2.json'),
 ];
 
-Http::concurrency(10)->promise($promises, function (Response $response, $index) {
+Http::concurrency(10)->multiAsync($promises, function (Response $response, $index) {
     echo "发起第 $index 个异步请求，请求时长：" . $response->json()->second . '秒' . PHP_EOL;
 }, function (RequestException $e) {
     echo '异步请求异常，错误码：' . $e->getCode() . '，错误信息：' . $e->getMessage() . PHP_EOL;

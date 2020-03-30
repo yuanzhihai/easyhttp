@@ -20,7 +20,6 @@ use GuzzleHttp\Exception\ConnectException;
  * @method \Gouguoyin\EasyHttp\Response redirect()
  * @method \Gouguoyin\EasyHttp\Response clientError()
  * @method \Gouguoyin\EasyHttp\Response serverError()
- * @method \Gouguoyin\EasyHttp\Response throw()
  */
 class Request
 {
@@ -65,7 +64,7 @@ class Request
     {
         $this->client = $this->getInstance();
 
-        $this->bodyFormat = 'json';
+        $this->bodyFormat = 'form_params';
         $this->options    = [
             'http_errors' => false,
         ];
@@ -305,76 +304,60 @@ class Request
         return $this->request('OPTIONS', $url, $data);
     }
 
-    public function getAsync(string $url, array $query = [], callable $success = null, callable $fail = null)
+    public function getAsync(string $url, $query = null, callable $success = null, callable $fail = null)
     {
-        parse_str(parse_url($url, PHP_URL_QUERY), $result);
-
-        $this->options['query'] = array_merge($result, $query);
+        is_callable($query) || $this->options['query'] = $query;
 
         return $this->requestAsync('GET', $url, $query, $success, $fail);
     }
 
-    public function postAsync(string $url, array $data = [], callable $success = null, callable $fail = null)
+    public function postAsync(string $url, $data = null, callable $success = null, callable $fail = null)
     {
-        $this->options[$this->bodyFormat] = $data;
+        is_callable($data) || $this->options[$this->bodyFormat] = $data;
 
         return $this->requestAsync('POST', $url, $data, $success, $fail);
     }
 
-    public function patchAsync(string $url, array $data = [], callable $success = null, callable $fail = null)
+    public function patchAsync(string $url, $data = null, callable $success = null, callable $fail = null)
     {
-        $this->options[$this->bodyFormat] = $data;
+        is_callable($data) || $this->options[$this->bodyFormat] = $data;
 
         return $this->requestAsync('PATCH', $url, $data, $success, $fail);
     }
 
-    public function putAsync(string $url, array $data = [], callable $success = null, callable $fail = null)
+    public function putAsync(string $url, $data = null, callable $success = null, callable $fail = null)
     {
-        $this->options[$this->bodyFormat] = $data;
+        is_callable($data) || $this->options[$this->bodyFormat] = $data;
 
         return $this->requestAsync('PUT', $url, $data, $success, $fail);
     }
 
-    public function deleteAsync(string $url, array $data = [], callable $success = null, callable $fail = null)
+    public function deleteAsync(string $url, $data = null, callable $success = null, callable $fail = null)
     {
-        $this->options[$this->bodyFormat] = $data;
+        is_callable($data) || $this->options[$this->bodyFormat] = $data;
 
         return $this->requestAsync('DELETE', $url, $data, $success, $fail);
     }
 
-    public function headAsync(string $url, array $data = [], callable $success = null, callable $fail = null)
+    public function headAsync(string $url, $data = null, callable $success = null, callable $fail = null)
     {
-        $this->options[$this->bodyFormat] = $data;
+        is_callable($data) || $this->options[$this->bodyFormat] = $data;
 
         return $this->requestAsync('HEAD', $url, $data, $success, $fail);
     }
 
-    public function optionsAsync(string $url, array $data = [], callable $success = null, callable $fail = null)
+    public function optionsAsync(string $url, $data = null, callable $success = null, callable $fail = null)
     {
-        $this->options[$this->bodyFormat] = $data;
+        is_callable($data) || $this->options[$this->bodyFormat] = $data;
 
         return $this->requestAsync('OPTIONS', $url, $data, $success, $fail);
     }
 
-    public function promise(array $promises, callable $success = null, callable $fail = null)
+    public function multiAsync(array $promises, callable $success = null, callable $fail = null)
     {
         $count = count($promises);
 
         $this->concurrency = $this->concurrency ? : $count;
-
-        $fulfilled = function ($response, $index) use ($success){
-            if ($success) {
-                $response = $this->response($response);
-                call_user_func_array($success, [$response, $index]);
-            }
-        };
-
-        $rejected = function ($exception, $index) use ($fail){
-            if ($fail) {
-                $exception = $this->exception($exception);
-                call_user_func_array($fail, [$exception, $index]);
-            }
-        };
 
         $requests = function () use ($promises) {
             foreach ($promises as $promise) {
@@ -384,13 +367,25 @@ class Request
             }
         };
 
-        $pool = new Pool($this->client, $requests($count), [
+        $fulfilled = function ($response, $index) use ($success){
+            if (!is_null($success)) {
+                $response = $this->response($response);
+                call_user_func_array($success, [$response, $index]);
+            }
+        };
+
+        $rejected = function ($exception, $index) use ($fail){
+            if (!is_null($fail)) {
+                $exception = $this->exception($exception);
+                call_user_func_array($fail, [$exception, $index]);
+            }
+        };
+
+        $pool = new Pool($this->client, $requests(), [
             'concurrency' => $this->concurrency,
             'fulfilled'   => $fulfilled,
             'rejected'    => $rejected,
         ]);
-
-        $this->promises[] = $promises;
 
         $pool->promise();
 
@@ -409,30 +404,38 @@ class Request
         }
     }
 
-    protected function requestAsync(string $method, string $url, array $options = [], callable $success = null, callable $fail = null)
+    protected function requestAsync(string $method, string $url, $options = null, callable $success = null, callable $fail = null)
     {
+        if (is_callable($options)) {
+            $successCallback = $options;
+            $failCallback    = $success;
+        } else {
+            $successCallback = $success;
+            $failCallback    = $fail;
+        }
+
         isset($this->options[$this->bodyFormat]) && $this->options[$this->bodyFormat] = $options;
 
         try {
             $promise = $this->client->requestAsync($method, $url, $this->options);
 
-            $fulfilled = function ($response) use ($success){
-                if ($success) {
+            $fulfilled = function ($response) use ($successCallback){
+                if (!is_null($successCallback)) {
                     $response = $this->response($response);
-                    call_user_func_array($success, [$response]);
+                    call_user_func_array($successCallback, [$response]);
                 }
             };
 
-            $rejected = function ($exception) use ($fail){
-                if ($fail) {
+            $rejected = function ($exception) use ($failCallback){
+                if (!is_null($failCallback)) {
                     $exception = $this->exception($exception);
-                    call_user_func_array($fail, [$exception]);
+                    call_user_func_array($failCallback, [$exception]);
                 }
             };
-
-            $this->promises[] = $promise;
 
             $promise->then($fulfilled, $rejected);
+
+            $this->promises[] = $promise;
 
             return $promise;
 

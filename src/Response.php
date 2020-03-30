@@ -132,20 +132,6 @@ class Response implements ArrayAccess
     }
 
     /**
-     * Throw an exception if a server or client error occurred.
-     * @return $this
-     * @throws RequestException
-     */
-    public function throw()
-    {
-        if ($this->serverError() || $this->clientError()) {
-            throw new ConnectionException("HTTP request returned status code {$this->status()}.", $this->status());
-        }
-
-        return $this;
-    }
-
-    /**
      * Determine if the given offset exists.
      *
      * @param  string  $offset

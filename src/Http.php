@@ -24,7 +24,6 @@ namespace Gouguoyin\EasyHttp;
  * @method static \Gouguoyin\EasyHttp\Request delay(int $seconds)
  * @method static \Gouguoyin\EasyHttp\Request timeout(int $seconds)
  * @method static \Gouguoyin\EasyHttp\Request concurrency(int $times)
- * @method static \Gouguoyin\EasyHttp\Request promise(array $promises, callable $success = null, callable $fail = null)
  *
  * @method static \Gouguoyin\EasyHttp\Request get(string $url, array $query = [])
  * @method static \Gouguoyin\EasyHttp\Request post(string $url, array $data = [])
@@ -34,14 +33,16 @@ namespace Gouguoyin\EasyHttp;
  * @method static \Gouguoyin\EasyHttp\Request head(string $url, array $data = [])
  * @method static \Gouguoyin\EasyHttp\Request options(string $url, array $data = [])
  *
- * @method static \Gouguoyin\EasyHttp\Request getAsync(string $url, array $query = [], callable $success = null, callable $fail = null)
- * @method static \Gouguoyin\EasyHttp\Request postAsync(string $url, array $data = [], callable $success = null, callable $fail = null)
- * @method static \Gouguoyin\EasyHttp\Request patchAsync(string $url, array $data = [], callable $success = null, callable $fail = null)
- * @method static \Gouguoyin\EasyHttp\Request putAsync(string $url, array $data = [], callable $success = null, callable $fail = null)
- * @method static \Gouguoyin\EasyHttp\Request deleteAsync(string $url, array $data = [], callable $success = null, callable $fail = null)
- * @method static \Gouguoyin\EasyHttp\Request headAsync(string $url, array $data = [], callable $success = null, callable $fail = null)
- * @method static \Gouguoyin\EasyHttp\Request optionsAsync(string $url, array $data = [], callable $success = null, callable $fail = null)
+ * @method static \Gouguoyin\EasyHttp\Request getAsync(string $url, array|null $query = null, callable $success = null, callable $fail = null)
+ * @method static \Gouguoyin\EasyHttp\Request postAsync(string $url, array|null $data = null, callable $success = null, callable $fail = null)
+ * @method static \Gouguoyin\EasyHttp\Request patchAsync(string $url, array|null $data = null, callable $success = null, callable $fail = null)
+ * @method static \Gouguoyin\EasyHttp\Request putAsync(string $url, array|null $data = null, callable $success = null, callable $fail = null)
+ * @method static \Gouguoyin\EasyHttp\Request deleteAsync(string $url, array|null $data = null, callable $success = null, callable $fail = null)
+ * @method static \Gouguoyin\EasyHttp\Request headAsync(string $url, array|null $data = null, callable $success = null, callable $fail = null)
+ * @method static \Gouguoyin\EasyHttp\Request optionsAsync(string $url, array|null $data = null, callable $success = null, callable $fail = null)
+ * @method static \Gouguoyin\EasyHttp\Request multiAsync(array $promises, callable $success = null, callable $fail = null)
  */
+
 class Http extends Facade
 {
     protected $facade = Request::class;
