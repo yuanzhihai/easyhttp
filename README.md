@@ -238,7 +238,7 @@ Http::concurrency(10)->multiAsync($promises, function (Response $response, $inde
 发起第 2 个异步请求，请求时长：2 秒
 发起第 0 个异步请求，请求时长：3 秒
 ```
-> 如果未调用concurrency()方法，并发次数默认为$promises的元素个数。$promises数组必须是异步请求
+> 如果未调用concurrency()方法，并发次数默认为$promises的元素个数，$promises数组里必须是异步请求
 
 ## 使用响应
 
