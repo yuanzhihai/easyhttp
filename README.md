@@ -221,18 +221,18 @@ use Gouguoyin\EasyHttp\RequestException;
 
 $promises = [
     Http::getAsync('http://easyhttp.gouguoyin.cn/api/sleep3.json'),
-    Http::getAsync('http://easyhttp.gouguoyin.cn/api/sleep1.json'),
+    Http::getAsync('http1://easyhttp.gouguoyin.cn/api/sleep1.json'),
     Http::getAsync('http://easyhttp.gouguoyin.cn/api/sleep2.json'),
 ];
 
 Http::concurrency(10)->multiAsync($promises, function (Response $response, $index) {
     echo "发起第 $index 个异步请求，请求时长：" . $response->json()->second . '秒' . PHP_EOL;
-}, function (RequestException $e) {
-    echo '异步请求异常，错误码：' . $e->getCode() . '，错误信息：' . $e->getMessage() . PHP_EOL;
+}, function (RequestException $e, $index) {
+    echo "发起第 $index 个请求失败，失败原因：" . $e->getMessage() . PHP_EOL;
 });
 
 //输出
-发起第 1 个异步请求，请求时长：1 秒
+发起第 1 个请求失败，失败原因：cURL error 1: Protocol "http1" not supported or disabled in libcurl (see https://curl.haxx.se/libcurl/c/libcurl-errors.html)
 发起第 2 个异步请求，请求时长：2 秒
 发起第 0 个异步请求，请求时长：3 秒
 ```
