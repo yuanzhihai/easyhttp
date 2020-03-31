@@ -1,4 +1,4 @@
-EasyHttp 是一个轻量级、语义化、对IDE友好的HTTP客户端，支持常见的HTTP请求、异步请求和异步请求，让你可以快速地使用 HTTP 请求与其他 Web 应用进行通信。
+EasyHttp 是一个轻量级、语义化、对IDE友好的HTTP客户端，支持常见的HTTP请求、异步请求和并发请求，让你可以快速地使用 HTTP 请求与其他 Web 应用进行通信。
 
 > EasyHttp并不强制依赖于cURL，如果没有安装cURL，EasyHttp会自动选择使用PHP流处理，或者你也可以提供自己的发送HTTP请求的处理方式。
 
