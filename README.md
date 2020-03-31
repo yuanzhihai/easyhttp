@@ -2,6 +2,8 @@ EasyHttp 是一个轻量级、语义化、对IDE友好的HTTP客户端，支持�
 
 > EasyHttp并不强制依赖于cURL，如果没有安装cURL，EasyHttp会自动选择使用PHP流处理，或者你也可以提供自己的发送HTTP请求的处理方式。
 
+如果您觉得EasyHttp对您有用的话，别忘了给点个赞哦^_^ ！
+
 github:[github.com/gouguoyin/easyhttp](https://github.com/gouguoyin/easyhttp "github.com/gouguoyin/easyhttp")
 
 gitee:[gitee.com/gouguoyin/easyhttp](https://gitee.com/gouguoyin/easyhttp "gitee.com/gouguoyin/easyhttp")
