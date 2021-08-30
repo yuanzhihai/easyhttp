@@ -7,6 +7,8 @@ EasyHttp 是一个轻量级、语义化、对IDE友好的HTTP客户端，支持�
 github:[github.com/gouguoyin/easyhttp](https://github.com/gouguoyin/easyhttp "github.com/gouguoyin/easyhttp")
 
 gitee:[gitee.com/gouguoyin/easyhttp](https://gitee.com/gouguoyin/easyhttp "gitee.com/gouguoyin/easyhttp")
+
+robeeask社区：[https://easyhttp.robeeask.com/](https://easyhttp.robeeask.com/)
 # 安装说明
 
 #### 环境依赖
