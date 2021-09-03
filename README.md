@@ -8,6 +8,13 @@ github:[github.com/yzh52521/easyhttp](https://github.com/yzh52521/easyhttp "gith
 
 gitee:[gitee.com/yzh52521/easyhttp](https://gitee.com/yzh52521/easyhttp "gitee.com/yzh52521/easyhttp")
 
+本包是基于 [ gouguoyin/easyhttp ] 进行扩展开发，主要实现了以下扩展：
+
+1. 增加 retry() 重试机制。
+2. 增加 debug 日志调试功能。
+3. 增加 withHost 指定服务端base_url
+
+
 # 安装说明
 
 #### 环境依赖
