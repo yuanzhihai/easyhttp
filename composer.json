@@ -1,5 +1,5 @@
 {
-    "name": "gouguoyin/easyhttp",
+    "name": "yzh52521/easyhttp",
     "description": "EasyHttp 是一个轻量级、语义化、对IDE友好的HTTP客户端，支持常见的HTTP请求、异步请求和并发请求，让你可以快速地使用 HTTP 请求与其他 Web 应用进行通信。",
     "license": "MIT",
     "keywords": [
@@ -12,20 +12,21 @@
         "http",
         "curl"
     ],
-    "homepage": "https://github.com/gouguoyin/easyhttp",
+    "homepage": "https://github.com/yzh52521/easyhttp",
     "authors": [
         {
-            "name": "gouguoyin",
-            "email": "245629560@qq.com"
+            "name": "yzh52521",
+            "email": "396751927@qq.com"
         }
     ],
     "require": {
-        "php": ">=5.5.0",
-        "guzzlehttp/guzzle": "~6.0"
+        "php": ">=7.1",
+        "guzzlehttp/guzzle": "~6.0",
+        "psr/log":"~1.0"
     },
     "autoload": {
         "psr-4": {
-            "Gouguoyin\\EasyHttp\\": "src/"
+            "yzh52521\\EasyHttp\\": "src/"
         }
     },
     "minimum-stability": "stable",

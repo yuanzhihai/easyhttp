@@ -1,6 +1,6 @@
 <?php
 
-namespace Gouguoyin\EasyHttp;
+namespace yzh52521\EasyHttp;
 
 class Facade
 {

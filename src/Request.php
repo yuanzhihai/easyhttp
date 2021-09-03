@@ -1,7 +1,11 @@
 <?php
 
-namespace Gouguoyin\EasyHttp;
+namespace yzh52521\EasyHttp;
 
+use GuzzleHttp\Exception\ServerException;
+use GuzzleHttp\Handler\CurlHandler;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Client;
 use GuzzleHttp\Promise;
@@ -9,17 +13,17 @@ use GuzzleHttp\Cookie\CookieJar;
 use GuzzleHttp\Exception\ConnectException;
 
 /**
- * @method \Gouguoyin\EasyHttp\Response body()
- * @method \Gouguoyin\EasyHttp\Response array()
- * @method \Gouguoyin\EasyHttp\Response json()
- * @method \Gouguoyin\EasyHttp\Response headers()
- * @method \Gouguoyin\EasyHttp\Response header(string $header)
- * @method \Gouguoyin\EasyHttp\Response status()
- * @method \Gouguoyin\EasyHttp\Response successful()
- * @method \Gouguoyin\EasyHttp\Response ok()
- * @method \Gouguoyin\EasyHttp\Response redirect()
- * @method \Gouguoyin\EasyHttp\Response clientError()
- * @method \Gouguoyin\EasyHttp\Response serverError()
+ * @method \yzh52521\EasyHttp\Response body()
+ * @method \yzh52521\EasyHttp\Response array()
+ * @method \yzh52521\EasyHttp\Response json()
+ * @method \yzh52521\EasyHttp\Response headers()
+ * @method \yzh52521\EasyHttp\Response header(string $header)
+ * @method \yzh52521\EasyHttp\Response status()
+ * @method \yzh52521\EasyHttp\Response successful()
+ * @method \yzh52521\EasyHttp\Response ok()
+ * @method \yzh52521\EasyHttp\Response redirect()
+ * @method \yzh52521\EasyHttp\Response clientError()
+ * @method \yzh52521\EasyHttp\Response serverError()
  */
 class Request
 {
@@ -58,6 +62,12 @@ class Request
     protected $concurrency;
 
     /**
+     *
+     * @var HandlerStack
+     */
+    protected $handlerStack;
+
+    /**
      * Request constructor.
      */
     public function __construct()
@@ -68,6 +78,7 @@ class Request
         $this->options    = [
             'http_errors' => false,
         ];
+        $this->handlerStack = HandlerStack::create(new CurlHandler());
     }
 
     /**
@@ -121,6 +132,13 @@ class Request
             'headers'  => $headers,
             'filename' => $filename,
         ]);
+
+        return $this;
+    }
+
+    public function withHost(string $host)
+    {
+        $this->options['base_uri'] = $host;
 
         return $this;
     }
@@ -227,6 +245,15 @@ class Request
         return $this;
     }
 
+    public function retry(int $times = 1, int $sleep = 0)
+    {
+        $this->handlerStack->push(Middleware::retry($this->decider($times), $this->retryDelay($sleep)));
+
+        $this->options['handler'] =  $this->handlerStack;
+
+        return $this;
+    }
+
     public function delay(int $seconds)
     {
         $this->options['delay'] = $seconds * 1000;
@@ -237,6 +264,61 @@ class Request
     public function timeout(int $seconds)
     {
         $this->options['timeout'] = $seconds * 1000;
+
+        return $this;
+    }
+
+    public function debug($class)
+    {
+        $logger = new Logger(function ($level, $message, array $context) use($class) {
+            $class::log($level, $message);
+        },function ($request, $response, $reason) {
+
+            $requestBody = $request->getBody();
+            $requestBody->rewind();
+
+            //请求头
+            $requestHeaders = [];
+
+            foreach ($request->getHeaders() as $k => $vs) {
+                foreach ($vs as $v) {
+                    $requestHeaders[] = "$k: $v";
+                }
+            }
+
+            //响应头
+            $responseHeaders = [];
+
+            foreach ($response->getHeaders() as $k => $vs) {
+                foreach ($vs as $v) {
+                    $responseHeaders[] = "$k: $v";
+                }
+            }
+
+            $uri = $request->getUri();
+            $path = $uri->getPath();
+
+            if ($query = $uri->getQuery()) {
+                $path .= '?'.$query;
+            }
+
+            return sprintf(
+                "Request %s\n%s %s HTTP/%s\r\n%s\r\n\r\n%s\r\n--------------------\r\nHTTP/%s %s %s\r\n%s\r\n\r\n%s",
+                $uri,
+                $request->getMethod(),
+                $path,
+                $request->getProtocolVersion(),
+                join("\r\n", $requestHeaders),
+                $requestBody->getContents(),
+                $response->getProtocolVersion(),
+                $response->getStatusCode(),
+                $response->getReasonPhrase(),
+                join("\r\n", $responseHeaders),
+                $response->getBody()->getContents()
+            );
+        });
+        $this->handlerStack->push($logger);
+        $this->options['handler'] =  $this->handlerStack;
 
         return $this;
     }
@@ -452,5 +534,35 @@ class Request
     protected function exception($exception)
     {
         return new RequestException($exception);
+    }
+
+    protected function decider($times)
+    {
+        return function (
+            $retries,
+            \GuzzleHttp\Psr7\Request $request,
+            \GuzzleHttp\Psr7\Response $response = null,
+            RequestException $exception = null
+        ) use ($times) {
+            // 超过最大重试次数，不再重试
+            if ($retries >= $times) {
+                return false;
+            }
+
+            return $exception instanceof ConnectException
+                || $exception instanceof ServerException
+                || ($response && $response->getStatusCode() >= 500);
+        };
+    }
+
+    /**
+     * 返回一个匿名函数，该匿名函数返回下次重试的时间（毫秒）
+     * @return \Closure
+     */
+    protected function retryDelay($sleep)
+    {
+        return function ($retries) use ($sleep) {
+            return $sleep * $retries;
+        };
     }
 }
