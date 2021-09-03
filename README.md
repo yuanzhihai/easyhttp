@@ -4,22 +4,21 @@ EasyHttp 是一个轻量级、语义化、对IDE友好的HTTP客户端，支持�
 
 如果您觉得EasyHttp对您有用的话，别忘了给点个赞哦^_^ ！
 
-github:[github.com/gouguoyin/easyhttp](https://github.com/gouguoyin/easyhttp "github.com/gouguoyin/easyhttp")
+github:[github.com/yzh52521/easyhttp](https://github.com/yzh52521/easyhttp "github.com/yzh52521/easyhttp")
 
-gitee:[gitee.com/gouguoyin/easyhttp](https://gitee.com/gouguoyin/easyhttp "gitee.com/gouguoyin/easyhttp")
+gitee:[gitee.com/yzh52521/easyhttp](https://gitee.com/yzh52521/easyhttp "gitee.com/yzh52521/easyhttp")
 
-robeeask社区：[https://easyhttp.robeeask.com/](https://easyhttp.robeeask.com/)
 # 安装说明
 
 #### 环境依赖
 
-- PHP >= 5.5.0
+- PHP >= 7.1.0
 - 如果使用PHP流处理，allow_url_fopen 必须在php.ini中启用。
 - 如果使用cURL处理，cURL >= 7.19.4，并且编译了OpenSSL 与 zlib。
 
 #### 一键安装
 
-    composer require gouguoyin/easyhttp
+    composer require yzh52521/easyhttp
 
 ## 发起请求
 
@@ -30,13 +29,13 @@ robeeask社区：[https://easyhttp.robeeask.com/](https://easyhttp.robeeask.com/
 ```php
 $response = Http::get('http://httpbin.org/get');
 
-$response = Http::get('http://httpbin.org/get?name=gouguoyin');
+$response = Http::get('http://httpbin.org/get?name=yzh52521');
 
-$response = Http::get('http://httpbin.org/get?name=gouguoyin', ['age' => 18]);
+$response = Http::get('http://httpbin.org/get?name=yzh52521', ['age' => 18]);
 
 $response = Http::post('http://httpbin.org/post');
 
-$response = Http::post('http://httpbin.org/post', ['name' => 'gouguoyun']);
+$response = Http::post('http://httpbin.org/post', ['name' => 'yzh52521']);
 
 $response = Http::patch(...);
 
@@ -49,6 +48,13 @@ $response = Http::head(...);
 $response = Http::options(...);
 ```
 
+###### 指定服务端base_url的请求
+
+```php
+// 指定服务端base_url地址,最终请求地址为 https://serv.yzh52521.com/login
+$response = Http::withHost('https://serv.yzh52521.com')->post('/login');
+
+```
 ###### 发送 Content-Type 编码请求
 
 ```php
@@ -84,7 +90,7 @@ $response = Http::attach(
 
 ```php
 $response = Http::withHeaders([
-    'x-powered-by' => 'gouguoyin'
+    'x-powered-by' => 'yzh52521'
 ])->post(...);
 ```
 
@@ -159,7 +165,7 @@ $response = Http::withProxy('tcp://localhost:8125')->post(...);
 $response = Http::withProxy([
     'http'  => 'tcp://localhost:8125', // Use this proxy with "http"
     'https' => 'tcp://localhost:9124', // Use this proxy with "https",
-    'no'    => ['.com.cn', 'gouguoyin.cn'] // Don't use a proxy with these
+    'no'    => ['.com.cn', 'yzh52521.cn'] // Don't use a proxy with these
 ])->post(...);
 ```
 
@@ -181,13 +187,19 @@ $response = Http::delay(60)->post(...);
 $response = Http::concurrency(10)->promise(...);
 ```
 
+###### 重发请求，设置retry方法。重试次数/两次重试之间的时间间隔（毫秒）：
+
+```php
+$response = Http::retry(3, 100)->post(...);
+```
+
 #### 异步请求
 
 ```php
-use Gouguoyin\EasyHttp\Response;
-use Gouguoyin\EasyHttp\RequestException;
+use yzh52521\EasyHttp\Response;
+use yzh52521\EasyHttp\RequestException;
 
-Http::getAsync('http://easyhttp.gouguoyin.cn/api/sleep3.json', ['token' => TOKEN], function (Response $response) {
+Http::getAsync('http://easyhttp.yzh52521.cn/api/sleep3.json', ['token' => TOKEN], function (Response $response) {
     echo '异步请求成功，响应内容：' . $response->body() . PHP_EOL;
 }, function (RequestException $e) {
     echo '异步请求异常，错误码：' . $e->getCode() . '，错误信息：' . $e->getMessage() . PHP_EOL;
@@ -198,7 +210,7 @@ echo json_encode(['code' => 200, 'msg' => '请求成功'], JSON_UNESCAPED_UNICOD
 {"code":200,"msg":"请求成功"}
 异步请求成功，响应内容：{"code":200,"msg":"success","second":3}
 
-Http::getAsync('http1://easyhttp.gouguoyin.cn/api/sleep3.json', function (Response $response) {
+Http::getAsync('http1://easyhttp.yzh52521.cn/api/sleep3.json', function (Response $response) {
     echo '异步请求成功，响应内容：' . $response->body() . PHP_EOL;
 }, function (RequestException $e) {
     echo '异步请求异常，错误信息：' . $e->getMessage() . PHP_EOL;
@@ -225,13 +237,13 @@ Http::optionsAsync(...);
 #### 异步并发请求
 
 ```php
-use Gouguoyin\EasyHttp\Response;
-use Gouguoyin\EasyHttp\RequestException;
+use yzh52521\EasyHttp\Response;
+use yzh52521\EasyHttp\RequestException;
 
 $promises = [
-    Http::getAsync('http://easyhttp.gouguoyin.cn/api/sleep3.json'),
-    Http::getAsync('http1://easyhttp.gouguoyin.cn/api/sleep1.json', ['name' => 'gouguoyin']),
-    Http::postAsync('http://easyhttp.gouguoyin.cn/api/sleep2.json', ['name' => 'gouguoyin']),
+    Http::getAsync('http://easyhttp.yzh52521.cn/api/sleep3.json'),
+    Http::getAsync('http1://easyhttp.yzh52521.cn/api/sleep1.json', ['name' => 'yzh52521']),
+    Http::postAsync('http://easyhttp.yzh52521.cn/api/sleep2.json', ['name' => 'yzh52521']),
 ];
 
 Http::concurrency(10)->multiAsync($promises, function (Response $response, $index) {
@@ -249,7 +261,7 @@ Http::concurrency(10)->multiAsync($promises, function (Response $response, $inde
 
 ## 使用响应
 
-发起请求后会返回一个 Gouguoyin\EasyHttp\Response $response的实例，该实例提供了以下方法来检查请求的响应：
+发起请求后会返回一个 yzh52521\EasyHttp\Response $response的实例，该实例提供了以下方法来检查请求的响应：
 
 ```php
 $response->body() : string;
@@ -266,7 +278,7 @@ $response->header($header) : string;
 
 ## 异常处理
 
-请求在发生客户端或服务端错误时会抛出 Gouguoyin\EasyHttp\RequestException $e异常，该实例提供了以下方法来返回异常信息：
+请求在发生客户端或服务端错误时会抛出 yzh52521\EasyHttp\RequestException $e异常，该实例提供了以下方法来返回异常信息：
 
 ```php
 $e->getCode() : int;
@@ -276,7 +288,21 @@ $e->getLine() : int;
 $e->getTrace() : array;
 $e->getTraceAsString() : string;
 ```
+## 调试日志
+
+有时候难免要对 Http 的请求和响应包体进行记录以方便查找问题或做什么
+
+```php
+//传递一个日志类 thinkphp  \think\facade\Log  laravel  Illuminate\Support\Facades\Log
+Http::debug(Log::class)->post(...);
+```
+
+
 ## 更新日志
+### 2021-09-03
+* 新增 debug() 调试日志
+* 新增 retry() 重试机制
+* 修复header重叠的bug
 ### 2020-03-30
 * 修复部分情况下IDE不能智能提示的BUG
 * get()、getAsync()方法支持带参数的url
@@ -297,6 +323,7 @@ $e->getTraceAsString() : string;
 ## Todo List
  - [x] 异步请求
  - [x] 并发请求
- - [ ] 重试机制
- - [ ] 支持http2
+ - [x] 重试机制
+ - [x] 支持http2
  - [ ] 支持swoole
+# easyhttp
