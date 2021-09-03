@@ -8,7 +8,7 @@ github:[github.com/yzh52521/easyhttp](https://github.com/yzh52521/easyhttp "gith
 
 gitee:[gitee.com/yzh52521/easyhttp](https://gitee.com/yzh52521/easyhttp "gitee.com/yzh52521/easyhttp")
 
-本包是基于 [ gouguoyin/easyhttp ] 进行扩展开发，主要实现了以下扩展：
+本包是基于 [ gouguoyin/easyhttp ](https://gitee.com/gouguoyin/easyhttp "gitee.com/gouguoyin/easyhttp") 进行扩展开发，主要实现了以下扩展：
 
 1. 增加 retry() 重试机制。
 2. 增加 debug 日志调试功能。
