@@ -5,6 +5,7 @@ namespace yzh52521\EasyHttp;
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Handler\CurlHandler;
 use GuzzleHttp\HandlerStack;
+
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Client;
@@ -67,6 +68,7 @@ class Request
      */
     protected $handlerStack;
 
+
     /**
      * Request constructor.
      */
@@ -78,7 +80,10 @@ class Request
         $this->options    = [
             'http_errors' => false,
         ];
-        $this->handlerStack = HandlerStack::create(new CurlHandler());
+        if (!$this->handlerStack instanceof HandlerStack) {
+            $this->handlerStack = HandlerStack::create(new CurlHandler());
+        }
+        $this->options['handler'] = $this->handlerStack;
     }
 
     /**
@@ -127,11 +132,11 @@ class Request
         $this->bodyFormat = 'multipart';
 
         $this->options = array_filter([
-            'name'     => $name,
-            'contents' => $contents,
-            'headers'  => $headers,
-            'filename' => $filename,
-        ]);
+                                          'name'     => $name,
+                                          'contents' => $contents,
+                                          'headers'  => $headers,
+                                          'filename' => $filename,
+                                      ]);
 
         return $this;
     }
@@ -245,13 +250,12 @@ class Request
         return $this;
     }
 
-    public function retry(int $times = 1, int $sleep = 0)
+    public function retry(int $retries = 1, int $sleep = 0)
     {
-        $this->handlerStack->push(Middleware::retry($this->decider($times), $this->retryDelay($sleep)));
 
-        $this->options['handler'] =  $this->handlerStack;
-
-        return $this;
+         $this->handlerStack->push((new Retry())->handle($retries,$sleep));
+         $this->options['handler'] = $this->handlerStack;
+         return $this;
     }
 
     public function delay(int $seconds)
@@ -270,10 +274,9 @@ class Request
 
     public function debug($class)
     {
-        $logger = new Logger(function ($level, $message, array $context) use($class) {
+        $logger = new Logger(function ($level, $message, array $context) use ($class) {
             $class::log($level, $message);
-        },function ($request, $response, $reason) {
-
+        }, function ($request, $response, $reason) {
             $requestBody = $request->getBody();
             $requestBody->rewind();
 
@@ -295,11 +298,11 @@ class Request
                 }
             }
 
-            $uri = $request->getUri();
+            $uri  = $request->getUri();
             $path = $uri->getPath();
 
             if ($query = $uri->getQuery()) {
-                $path .= '?'.$query;
+                $path .= '?' . $query;
             }
 
             return sprintf(
@@ -318,7 +321,7 @@ class Request
             );
         });
         $this->handlerStack->push($logger);
-        $this->options['handler'] =  $this->handlerStack;
+        $this->options['handler'] = $this->handlerStack;
 
         return $this;
     }
@@ -326,11 +329,11 @@ class Request
     public function attach(string $name, string $contents, string $filename = null, array $headers = [])
     {
         $this->options['multipart'] = array_filter([
-            'name'     => $name,
-            'contents' => $contents,
-            'headers'  => $headers,
-            'filename' => $filename,
-        ]);
+                                                       'name'     => $name,
+                                                       'contents' => $contents,
+                                                       'headers'  => $headers,
+                                                       'filename' => $filename,
+                                                   ]);
 
         return $this;
     }
@@ -439,24 +442,24 @@ class Request
     {
         $count = count($promises);
 
-        $this->concurrency = $this->concurrency ? : $count;
+        $this->concurrency = $this->concurrency ?: $count;
 
         $requests = function () use ($promises) {
             foreach ($promises as $promise) {
-                yield function() use ($promise) {
+                yield function () use ($promise) {
                     return $promise;
                 };
             }
         };
 
-        $fulfilled = function ($response, $index) use ($success){
+        $fulfilled = function ($response, $index) use ($success) {
             if (!is_null($success)) {
                 $response = $this->response($response);
                 call_user_func_array($success, [$response, $index]);
             }
         };
 
-        $rejected = function ($exception, $index) use ($fail){
+        $rejected = function ($exception, $index) use ($fail) {
             if (!is_null($fail)) {
                 $exception = $this->exception($exception);
                 call_user_func_array($fail, [$exception, $index]);
@@ -486,8 +489,13 @@ class Request
         }
     }
 
-    protected function requestAsync(string $method, string $url, $options = null, callable $success = null, callable $fail = null)
-    {
+    protected function requestAsync(
+        string $method,
+        string $url,
+        $options = null,
+        callable $success = null,
+        callable $fail = null
+    ) {
         if (is_callable($options)) {
             $successCallback = $options;
             $failCallback    = $success;
@@ -501,14 +509,14 @@ class Request
         try {
             $promise = $this->client->requestAsync($method, $url, $this->options);
 
-            $fulfilled = function ($response) use ($successCallback){
+            $fulfilled = function ($response) use ($successCallback) {
                 if (!is_null($successCallback)) {
                     $response = $this->response($response);
                     call_user_func_array($successCallback, [$response]);
                 }
             };
 
-            $rejected = function ($exception) use ($failCallback){
+            $rejected = function ($exception) use ($failCallback) {
                 if (!is_null($failCallback)) {
                     $exception = $this->exception($exception);
                     call_user_func_array($failCallback, [$exception]);
@@ -520,7 +528,6 @@ class Request
             $this->promises[] = $promise;
 
             return $promise;
-
         } catch (ConnectException $e) {
             throw new ConnectionException($e->getMessage(), 0, $e);
         }
@@ -536,33 +543,4 @@ class Request
         return new RequestException($exception);
     }
 
-    protected function decider($times)
-    {
-        return function (
-            $retries,
-            \GuzzleHttp\Psr7\Request $request,
-            \GuzzleHttp\Psr7\Response $response = null,
-            RequestException $exception = null
-        ) use ($times) {
-            // 超过最大重试次数，不再重试
-            if ($retries >= $times) {
-                return false;
-            }
-
-            return $exception instanceof ConnectException
-                || $exception instanceof ServerException
-                || ($response && $response->getStatusCode() >= 500);
-        };
-    }
-
-    /**
-     * 返回一个匿名函数，该匿名函数返回下次重试的时间（毫秒）
-     * @return \Closure
-     */
-    protected function retryDelay($sleep)
-    {
-        return function ($retries) use ($sleep) {
-            return $sleep * $retries;
-        };
-    }
 }
