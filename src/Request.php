@@ -252,9 +252,9 @@ class Request
 
     public function retry(int $retries = 1, int $sleep = 0)
     {
-
          $this->handlerStack->push((new Retry())->handle($retries,$sleep));
          $this->options['handler'] = $this->handlerStack;
+
          return $this;
     }
 
