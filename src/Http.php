@@ -23,7 +23,7 @@ namespace yzh52521\EasyHttp;
  * @method static \yzh52521\EasyHttp\Request withOptions(array $options)
  *
  * @method static \yzh52521\EasyHttp\Request debug($class)
- * @method static \yzh52521\EasyHttp\Request retry(int $times=1,int $sleep=0)
+ * @method static \yzh52521\EasyHttp\Request retry(int $retries=1,int $sleep=0)
  * @method static \yzh52521\EasyHttp\Request delay(int $seconds)
  * @method static \yzh52521\EasyHttp\Request timeout(int $seconds)
  * @method static \yzh52521\EasyHttp\Request concurrency(int $times)
