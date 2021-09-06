@@ -2,11 +2,9 @@
 
 namespace yzh52521\EasyHttp;
 
-use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Handler\CurlHandler;
 use GuzzleHttp\HandlerStack;
 
-use GuzzleHttp\Middleware;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Client;
 use GuzzleHttp\Promise;
