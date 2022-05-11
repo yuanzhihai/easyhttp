@@ -306,6 +306,8 @@ Http::debug(Log::class)->post(...);
 
 
 ## 更新日志
+### 2022-05-11
+* 新增removeBodyFormat() 用于withOptions 指定body时，清除原由的bodyFromat
 ### 2022-05-10
 * 新增发送原生请求的方法client()
 * 新增发送原生异步请求的方法clientASync()

@@ -44,6 +44,8 @@ class Request
      */
     protected $bodyFormat;
 
+    protected $isRemoveBodyFormat = false;
+
     /**
      * @var array
      */
@@ -270,6 +272,12 @@ class Request
         return $this;
     }
 
+    public function removeBodyFormat()
+    {
+        $this->isRemoveBodyFormat = true;
+        return $this;
+    }
+
     public function debug($class)
     {
         $logger = new Logger(function ($level, $message, array $context) use ($class) {
@@ -478,7 +486,9 @@ class Request
     protected function request(string $method, string $url, array $options = [])
     {
         isset($this->options[$this->bodyFormat]) && $this->options[$this->bodyFormat] = $options;
-
+        if ($this->isRemoveBodyFormat) {
+            unset($this->options[$this->bodyFormat]);
+        }
         try {
             $response = $this->client->request($method, $url, $this->options);
             return $this->response($response);
@@ -548,6 +558,10 @@ class Request
         }
 
         isset($this->options[$this->bodyFormat]) && $this->options[$this->bodyFormat] = $options;
+
+        if ($this->isRemoveBodyFormat) {
+            unset($this->options[$this->bodyFormat]);
+        }
 
         try {
             $promise = $this->client->requestAsync($method, $url, $this->options);

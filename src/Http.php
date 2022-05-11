@@ -27,6 +27,9 @@ namespace yzh52521\EasyHttp;
  * @method static \yzh52521\EasyHttp\Request delay(int $seconds)
  * @method static \yzh52521\EasyHttp\Request timeout(int $seconds)
  * @method static \yzh52521\EasyHttp\Request concurrency(int $times)
+ * @method static \yzh52521\EasyHttp\Request client(string $method, string $url, array $options = [])
+ * @method static \yzh52521\EasyHttp\Request clientAsync(string $method, string $url, array $options = [])
+ * @method static \yzh52521\EasyHttp\Request removeBodyFormat()
  *
  * @method static \yzh52521\EasyHttp\Request get(string $url, array $query = [])
  * @method static \yzh52521\EasyHttp\Request post(string $url, array $data = [])
