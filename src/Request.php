@@ -150,6 +150,8 @@ class Request
 
     public function withOptions(array $options)
     {
+        unset($this->options[$this->bodyFormat], $this->options['body']);
+
         $this->options = array_merge_recursive($this->options, $options);
 
         return $this;
