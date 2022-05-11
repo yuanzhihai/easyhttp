@@ -130,11 +130,11 @@ class Request
         $this->bodyFormat = 'multipart';
 
         $this->options = array_filter([
-                                          'name'     => $name,
-                                          'contents' => $contents,
-                                          'headers'  => $headers,
-                                          'filename' => $filename,
-                                      ]);
+            'name'     => $name,
+            'contents' => $contents,
+            'headers'  => $headers,
+            'filename' => $filename,
+        ]);
 
         return $this;
     }
@@ -250,10 +250,10 @@ class Request
 
     public function retry(int $retries = 1, int $sleep = 0)
     {
-         $this->handlerStack->push((new Retry())->handle($retries,$sleep));
-         $this->options['handler'] = $this->handlerStack;
+        $this->handlerStack->push((new Retry())->handle($retries, $sleep));
+        $this->options['handler'] = $this->handlerStack;
 
-         return $this;
+        return $this;
     }
 
     public function delay(int $seconds)
@@ -327,11 +327,11 @@ class Request
     public function attach(string $name, string $contents, string $filename = null, array $headers = [])
     {
         $this->options['multipart'] = array_filter([
-                                                       'name'     => $name,
-                                                       'contents' => $contents,
-                                                       'headers'  => $headers,
-                                                       'filename' => $filename,
-                                                   ]);
+            'name'     => $name,
+            'contents' => $contents,
+            'headers'  => $headers,
+            'filename' => $filename,
+        ]);
 
         return $this;
     }
@@ -487,13 +487,58 @@ class Request
         }
     }
 
+    /**
+     * 原生请求
+     * @param string $method
+     * @param string $url
+     * @param array $options
+     * @return Response
+     * @throws ConnectionException
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function client(string $method, string $url, array $options = [])
+    {
+        try {
+            if (empty($options)) {
+                $options = $this->options;
+            }
+            $response = $this->client->request($method, $url, $options);
+            return $this->response($response);
+        } catch (ConnectException $e) {
+            throw new ConnectionException($e->getMessage(), 0, $e);
+        }
+    }
+
+    /**
+     * 原生异常请求
+     * @param string $method
+     * @param string $url
+     * @param array $options
+     * @return Response
+     * @throws ConnectionException
+     */
+    public function clientAsync(string $method, string $url, array $options = [])
+    {
+        try {
+            if (empty($options)) {
+                $options = $this->options;
+            }
+            $response = $this->client->requestAsync($method, $url, $options);
+            return $this->response($response);
+        } catch (ConnectException $e) {
+            throw new ConnectionException($e->getMessage(), 0, $e);
+        }
+    }
+
+
     protected function requestAsync(
-        string $method,
-        string $url,
-        $options = null,
+        string   $method,
+        string   $url,
+                 $options = null,
         callable $success = null,
         callable $fail = null
-    ) {
+    )
+    {
         if (is_callable($options)) {
             $successCallback = $options;
             $failCallback    = $success;
