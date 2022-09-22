@@ -125,7 +125,8 @@ class Logger
      *
      * @param RequestInterface $request
      * @param ResponseInterface|null $response
-     * @param mixed $reason
+     * @param $reason
+     * @return mixed
      */
     protected function log(
         RequestInterface $request,
@@ -149,7 +150,7 @@ class Logger
             return call_user_func($this->logger, $level, $message, $context);
         }
 
-        return $this->logger->log($level, $message, $context);
+         $this->logger->log($level, $message, $context);
     }
 
     /**
@@ -217,7 +218,7 @@ class Logger
      *
      * @param RequestInterface $request
      *
-     * @return Closure
+     * @return \Closure
      */
     protected function onSuccess(RequestInterface $request)
     {
@@ -232,7 +233,7 @@ class Logger
      *
      * @param RequestInterface $request
      *
-     * @return Closure
+     * @return \Closure
      */
     protected function onFailure(RequestInterface $request)
     {
@@ -252,7 +253,7 @@ class Logger
      *
      * @param callable $handler
      *
-     * @return Closure
+     * @return \Closure
      */
     public function __invoke(callable $handler)
     {

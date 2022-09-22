@@ -28,14 +28,13 @@ class Retry
             if ($retries >= $times) {
                 return false;
             }
-            return $exception instanceof ConnectException
-                || $exception instanceof ServerException
-                || ($response && $response->getStatusCode() >= 500);
+            return $exception instanceof ConnectException || $exception instanceof ServerException || ($response && $response->getStatusCode() >= 500);
         };
     }
 
     /**
      * 返回一个匿名函数，该匿名函数返回下次重试的时间（毫秒）
+     * @param int $retry_delay
      * @return \Closure
      */
     protected function delay(int $retry_delay)

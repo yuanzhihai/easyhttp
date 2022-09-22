@@ -20,20 +20,14 @@
         }
     ],
     "require": {
-        "php": ">=7.1",
-        "guzzlehttp/guzzle": "~6.0|~7.0",
-        "psr/log":"~1.0"
+        "php": ">=7.4",
+        "guzzlehttp/guzzle": "^6.0|^7.0",
+        "psr/log":"^2.0"
     },
     "autoload": {
         "psr-4": {
             "yzh52521\\EasyHttp\\": "src/"
         }
     },
-    "minimum-stability": "stable",
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://mirrors.aliyun.com/composer/"
-        }
-    ]
+    "minimum-stability": "stable"
 }
