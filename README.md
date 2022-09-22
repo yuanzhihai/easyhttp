@@ -19,7 +19,7 @@ gitee:[gitee.com/yzh52521/easyhttp](https://gitee.com/yzh52521/easyhttp "gitee.c
 
 #### 环境依赖
 
-- PHP >= 7.1.0
+- PHP >= 7.2.5
 - 如果使用PHP流处理，allow_url_fopen 必须在php.ini中启用。
 - 如果使用cURL处理，cURL >= 7.19.4，并且编译了OpenSSL 与 zlib。
 
@@ -336,6 +336,6 @@ Http::debug(Log::class)->post(...);
  - [x] 异步请求
  - [x] 并发请求
  - [x] 重试机制
- - [x] 支持http2
+ - [ ] 支持http2
  - [ ] 支持swoole
 # easyhttp
