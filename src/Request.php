@@ -348,7 +348,9 @@ class Request
 
     public function get(string $url,array $query = [])
     {
-        parse_str( parse_url( $url,PHP_URL_QUERY ),$result );
+        $params= parse_url( $url,PHP_URL_QUERY );
+
+        parse_str( $params?:'',$result );
 
         $this->options['query'] = array_merge( $result,$query );
 

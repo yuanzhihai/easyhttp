@@ -27,7 +27,7 @@ class Response implements ArrayAccess
      */
     public function body()
     {
-        return (string) $this->response->getBody();
+        return (string)$this->response->getBody();
     }
 
     /**
@@ -37,7 +37,7 @@ class Response implements ArrayAccess
     public function array()
     {
         if (!$this->decoded) {
-            $this->decoded = json_decode((string) $this->response->getBody(), true);
+            $this->decoded = json_decode( (string)$this->response->getBody(),true );
         }
 
         return $this->decoded;
@@ -50,7 +50,7 @@ class Response implements ArrayAccess
     public function json()
     {
         if (!$this->decoded) {
-            $this->decoded = json_decode((string) $this->response->getBody());
+            $this->decoded = json_decode( (string)$this->response->getBody() );
         }
 
         return $this->decoded;
@@ -63,7 +63,7 @@ class Response implements ArrayAccess
      */
     public function header(string $header)
     {
-        return $this->response->getHeaderLine($header);
+        return $this->response->getHeaderLine( $header );
     }
 
     /**
@@ -72,9 +72,9 @@ class Response implements ArrayAccess
      */
     public function headers()
     {
-        return $this->mapWithKeys($this->response->getHeaders(), function ($v, $k) {
+        return $this->mapWithKeys( $this->response->getHeaders(),function ($v,$k) {
             return [$k => $v];
-        })->response;
+        } )->response;
     }
 
     /**
@@ -83,7 +83,7 @@ class Response implements ArrayAccess
      */
     public function status()
     {
-        return (int) $this->response->getStatusCode();
+        return (int)$this->response->getStatusCode();
     }
 
     /**
@@ -134,20 +134,22 @@ class Response implements ArrayAccess
     /**
      * Determine if the given offset exists.
      *
-     * @param  string  $offset
-     * @return bool
+     * @param string $offset
+     * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
-        return isset($this->json()[$offset]);
+        return array_key_exists( $offset,$this->json() );
     }
 
     /**
      * Get the value for a given offset.
      *
-     * @param  string  $offset
+     * @param string $offset
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->json()[$offset];
@@ -156,28 +158,30 @@ class Response implements ArrayAccess
     /**
      * Set the value at the given offset.
      *
-     * @param  string  $offset
-     * @param  mixed  $value
+     * @param string $offset
+     * @param mixed $value
      * @return void
      *
      * @throws \LogicException
      */
-    public function offsetSet($offset, $value)
+    #[\ReturnTypeWillChange]
+    public function offsetSet($offset,$value)
     {
-        throw new LogicException('Response data may not be mutated using array access.');
+        throw new LogicException( 'Response data may not be mutated using array access.' );
     }
 
     /**
      * Unset the value at the given offset.
      *
-     * @param  string  $offset
+     * @param string $offset
      * @return void
      *
      * @throws \LogicException
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
-        throw new LogicException('Response data may not be mutated using array access.');
+        throw new LogicException( 'Response data may not be mutated using array access.' );
     }
 
     /**
@@ -190,19 +194,19 @@ class Response implements ArrayAccess
         return $this->body();
     }
 
-    protected function mapWithKeys($items, callable $callback)
+    protected function mapWithKeys($items,callable $callback)
     {
         $result = [];
 
-        foreach ($items as $key => $value) {
-            $assoc = $callback($value, $key);
+        foreach ( $items as $key => $value ) {
+            $assoc = $callback( $value,$key );
 
-            foreach ($assoc as $mapKey => $mapValue) {
+            foreach ( $assoc as $mapKey => $mapValue ) {
                 $result[$mapKey] = $mapValue;
             }
         }
 
-        return new static($result);
+        return new static( $result );
     }
 
 }
