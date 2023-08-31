@@ -267,7 +267,7 @@ class Request
         return $this;
     }
 
-    public function timeout(int $seconds)
+    public function timeout(float $seconds)
     {
         $this->options['timeout'] = $seconds;
 
