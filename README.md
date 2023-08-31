@@ -13,6 +13,11 @@ gitee:[gitee.com/yzh52521/easyhttp](https://gitee.com/yzh52521/easyhttp "gitee.c
 1. 增加 retry() 重试机制。
 2. 增加 debug 日志调试功能。
 3. 增加 withHost 指定服务端base_url
+4. 增加 withBody 发送原始数据（Raw）请求
+5. 增加 withMiddleware/withRequestMiddleware/withResponseMiddleware  Guzzle 中间件
+6. 增加 connectTimeout 设置等待服务器响应超时
+7. 增加 sink  响应的主体部分将要保存的位置
+8. 增加 maxRedirects 请求的重定向行为最大次数
 
 
 # 安装说明
@@ -53,6 +58,7 @@ $response = Http::delete(...);
 $response = Http::head(...);
 
 $response = Http::options(...);
+
 ```
 
 ###### 指定服务端base_url的请求
@@ -61,6 +67,12 @@ $response = Http::options(...);
 // 指定服务端base_url地址,最终请求地址为 https://serv.yzh52521.com/login
 $response = Http::withHost('https://serv.yzh52521.com')->post('/login');
 
+```
+##### 发送原始数据（Raw）请求
+```php
+$response = Http::withBody(
+    base64_encode($photo), 'image/jpeg'
+)->post(...);
 ```
 ###### 发送 Content-Type 编码请求
 
@@ -114,7 +126,11 @@ $response = Http::withRedirect([
     'protocols'       => ['http', 'https'],
     'track_redirects' => false
 ])->post(...);
+
+$response = Http::maxRedirects(5)->post(...);
 ```
+
+
 
 ###### 携带认证的请求
 
@@ -182,6 +198,12 @@ $response = Http::withProxy([
 $response = Http::timeout(60)->post(...);
 ```
 
+###### 设置等待服务器响应超时的最大值(单位秒)
+
+```php
+$response = Http::connectTimeout(60)->post(...);
+```
+
 ###### 设置延迟时间(单位秒)
 
 ```php
@@ -198,6 +220,42 @@ $response = Http::concurrency(10)->promise(...);
 
 ```php
 $response = Http::retry(3, 100)->post(...);
+```
+##### 响应的主体部分将要保存的位置
+```php
+$response = Http::sink('/path/to/file')->post(...);
+```
+
+#### Guzzle 中间件
+
+```php
+use GuzzleHttp\Middleware;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+
+$response = Http::withMiddleware(
+    Middleware::mapRequest(function (RequestInterface $request) {
+        $request = $request->withHeader('X-Example', 'Value');
+        return $request;
+    })
+)->get('http://example.com');
+
+………………
+$response = Http::withRequestMiddleware(
+    function (RequestInterface $request) {
+        $request = $request->withHeader('X-Example', 'Value');
+        return $request;
+    }
+)->get('http://example.com');
+
+………………
+
+$response = Http::withResponseMiddleware(
+    function (RequestInterface $response) {
+        $response = $response->getHeader('X-Example');
+        return $response;
+    }
+)->get('http://example.com');
 ```
 
 #### 异步请求
@@ -306,6 +364,12 @@ Http::debug(Log::class)->post(...);
 
 
 ## 更新日志
+### 2023-08-31
+* 新增 withBody 可以发送原始数据（Raw）请求
+* 新增 withMiddleware/withRequestMiddleware/withResponseMiddleware  支持Guzzle中间件 
+* 新增 connectTimeout 设置等待服务器响应超时 
+* 新增 sink  响应的主体部分将要保存的位置 
+* 新增 maxRedirects 请求的重定向行为最大次数
 ### 2022-05-11
 * 新增removeBodyFormat() 用于withOptions 指定body时，清除原由的bodyFromat
 ### 2022-05-10
