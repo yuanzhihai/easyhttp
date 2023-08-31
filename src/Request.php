@@ -269,7 +269,7 @@ class Request
 
     public function timeout(int $seconds)
     {
-        $this->options['timeout'] = $seconds * 1000;
+        $this->options['timeout'] = $seconds;
 
         return $this;
     }
