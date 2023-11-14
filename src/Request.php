@@ -97,7 +97,7 @@ class Request
     public function __destruct()
     {
         if (!empty($this->promises)) {
-            \GuzzleHttp\Promise\Utils($this->promises)->wait();
+            //\GuzzleHttp\Promise\Utils($this->promises)->wait();
         }
     }
 
