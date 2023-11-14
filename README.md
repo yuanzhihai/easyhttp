@@ -264,22 +264,26 @@ $response = Http::withResponseMiddleware(
 use yzh52521\EasyHttp\Response;
 use yzh52521\EasyHttp\RequestException;
 
-Http::getAsync('http://easyhttp.yzh52521.cn/api/sleep3.json', ['token' => TOKEN], function (Response $response) {
+$promise = Http::getAsync('http://easyhttp.yzh52521.cn/api/sleep3.json', ['token' => TOKEN], function (Response $response) {
     echo '异步请求成功，响应内容：' . $response->body() . PHP_EOL;
 }, function (RequestException $e) {
     echo '异步请求异常，错误码：' . $e->getCode() . '，错误信息：' . $e->getMessage() . PHP_EOL;
 });
+
+$promise->wait();
 echo json_encode(['code' => 200, 'msg' => '请求成功'], JSON_UNESCAPED_UNICODE) . PHP_EOL;
 
 //输出
 {"code":200,"msg":"请求成功"}
 异步请求成功，响应内容：{"code":200,"msg":"success","second":3}
 
-Http::getAsync('http1://easyhttp.yzh52521.cn/api/sleep3.json', function (Response $response) {
+$promise = Http::getAsync('http1://easyhttp.yzh52521.cn/api/sleep3.json', function (Response $response) {
     echo '异步请求成功，响应内容：' . $response->body() . PHP_EOL;
 }, function (RequestException $e) {
     echo '异步请求异常，错误信息：' . $e->getMessage() . PHP_EOL;
 });
+
+$promise->wait();
 echo json_encode(['code' => 200, 'msg' => '请求成功'], JSON_UNESCAPED_UNICODE) . PHP_EOL;
 
 //输出
@@ -297,6 +301,9 @@ Http::deleteAsync(...);
 Http::headAsync(...);
 
 Http::optionsAsync(...);
+
+使用 等待异步回调处理完成
+Http::wait();
 ```
 
 #### 异步并发请求
@@ -311,11 +318,14 @@ $promises = [
     Http::postAsync('http://easyhttp.yzh52521.cn/api/sleep2.json', ['name' => 'yzh52521']),
 ];
 
-Http::concurrency(10)->multiAsync($promises, function (Response $response, $index) {
+$pool=Http::concurrency(10)->multiAsync($promises, function (Response $response, $index) {
     echo "发起第 $index 个异步请求，请求时长：" . $response->json()->second . '秒' . PHP_EOL;
 }, function (RequestException $e, $index) {
     echo "发起第 $index 个请求失败，失败原因：" . $e->getMessage() . PHP_EOL;
 });
+
+$promise = $pool->promise();
+$promise->wait();
 
 //输出
 发起第 1 个请求失败，失败原因：cURL error 1: Protocol "http1" not supported or disabled in libcurl (see https://curl.haxx.se/libcurl/c/libcurl-errors.html)
