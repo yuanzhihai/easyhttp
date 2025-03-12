@@ -141,7 +141,7 @@ class Request
         return $this;
     }
 
-    public function asMultipart(string $name, string $contents, string $filename = null, array $headers = [])
+    public function asMultipart(string $name, string $contents, ?string $filename = null, array $headers = [])
     {
         $this->bodyFormat = 'multipart';
 
@@ -412,7 +412,7 @@ class Request
         return $this;
     }
 
-    public function attach(string $name, string $contents, string $filename = null, array $headers = [])
+    public function attach(string $name, string $contents, ?string $filename = null, array $headers = [])
     {
         $this->options['multipart'] = array_filter([
             'name'     => $name,
@@ -477,56 +477,56 @@ class Request
         return $this->request('OPTIONS', $url, $data);
     }
 
-    public function getAsync(string $url, $query = null, callable $success = null, callable $fail = null)
+    public function getAsync(string $url, $query = null, ?callable $success = null, ?callable $fail = null)
     {
         is_callable($query) || $this->options['query'] = $query;
 
         return $this->requestAsync('GET', $url, $query, $success, $fail);
     }
 
-    public function postAsync(string $url, $data = null, callable $success = null, callable $fail = null)
+    public function postAsync(string $url, $data = null, ?callable $success = null, ?callable $fail = null)
     {
         is_callable($data) || $this->options[$this->bodyFormat] = $data;
 
         return $this->requestAsync('POST', $url, $data, $success, $fail);
     }
 
-    public function patchAsync(string $url, $data = null, callable $success = null, callable $fail = null)
+    public function patchAsync(string $url, $data = null, ?callable $success = null, ?callable $fail = null)
     {
         is_callable($data) || $this->options[$this->bodyFormat] = $data;
 
         return $this->requestAsync('PATCH', $url, $data, $success, $fail);
     }
 
-    public function putAsync(string $url, $data = null, callable $success = null, callable $fail = null)
+    public function putAsync(string $url, $data = null, ?callable $success = null, ?callable $fail = null)
     {
         is_callable($data) || $this->options[$this->bodyFormat] = $data;
 
         return $this->requestAsync('PUT', $url, $data, $success, $fail);
     }
 
-    public function deleteAsync(string $url, $data = null, callable $success = null, callable $fail = null)
+    public function deleteAsync(string $url, $data = null, ?callable $success = null, ?callable $fail = null)
     {
         is_callable($data) || $this->options[$this->bodyFormat] = $data;
 
         return $this->requestAsync('DELETE', $url, $data, $success, $fail);
     }
 
-    public function headAsync(string $url, $data = null, callable $success = null, callable $fail = null)
+    public function headAsync(string $url, $data = null, ?callable $success = null, ?callable $fail = null)
     {
         is_callable($data) || $this->options[$this->bodyFormat] = $data;
 
         return $this->requestAsync('HEAD', $url, $data, $success, $fail);
     }
 
-    public function optionsAsync(string $url, $data = null, callable $success = null, callable $fail = null)
+    public function optionsAsync(string $url, $data = null, ?callable $success = null, ?callable $fail = null)
     {
         is_callable($data) || $this->options[$this->bodyFormat] = $data;
 
         return $this->requestAsync('OPTIONS', $url, $data, $success, $fail);
     }
 
-    public function multiAsync(array $promises, callable $success = null, callable $fail = null)
+    public function multiAsync(array $promises, ?callable $success = null, ?callable $fail = null)
     {
         $count = count($promises);
 
@@ -643,7 +643,7 @@ class Request
     }
 
 
-    protected function requestAsync(string $method, string $url, $options = null, callable $success = null, callable $fail = null)
+    protected function requestAsync(string $method, string $url, $options = null, ?callable $success = null, ?callable $fail = null)
     {
         if (is_callable($options)) {
             $successCallback = $options;
