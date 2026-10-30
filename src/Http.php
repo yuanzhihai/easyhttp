@@ -47,14 +47,14 @@ namespace yzh52521\EasyHttp;
  * @method static \yzh52521\EasyHttp\Response client(string $method, string $url, array $options = [])
  * @method static \yzh52521\EasyHttp\Response clientAsync(string $method, string $url, array $options = [])
  *
- * @method static \GuzzleHttp\Promise\PromiseInterface getAsync(string $url, array|null $query = null, callable $success = null, callable $fail = null)
- * @method static \GuzzleHttp\Promise\PromiseInterface postAsync(string $url, array|null $data = null, callable $success = null, callable $fail = null)
- * @method static \GuzzleHttp\Promise\PromiseInterface patchAsync(string $url, array|null $data = null, callable $success = null, callable $fail = null)
- * @method static \GuzzleHttp\Promise\PromiseInterface putAsync(string $url, array|null $data = null, callable $success = null, callable $fail = null)
- * @method static \GuzzleHttp\Promise\PromiseInterface deleteAsync(string $url, array|null $data = null, callable $success = null, callable $fail = null)
- * @method static \GuzzleHttp\Promise\PromiseInterface headAsync(string $url, array|null $data = null, callable $success = null, callable $fail = null)
- * @method static \GuzzleHttp\Promise\PromiseInterface optionsAsync(string $url, array|null $data = null, callable $success = null, callable $fail = null)
- * @method static \GuzzleHttp\Pool multiAsync(array $promises, callable $success = null, callable $fail = null)
+ * @method static \GuzzleHttp\Promise\PromiseInterface getAsync(string $url, array|null $query = null, ?callable $success = null, ?callable $fail = null)
+ * @method static \GuzzleHttp\Promise\PromiseInterface postAsync(string $url, array|null $data = null, ?callable $success = null, ?callable $fail = null)
+ * @method static \GuzzleHttp\Promise\PromiseInterface patchAsync(string $url, array|null $data = null, ?callable $success = null, ?callable $fail = null)
+ * @method static \GuzzleHttp\Promise\PromiseInterface putAsync(string $url, array|null $data = null, ?callable $success = null, ?callable $fail = null)
+ * @method static \GuzzleHttp\Promise\PromiseInterface deleteAsync(string $url, array|null $data = null, ?callable $success = null, ?callable $fail = null)
+ * @method static \GuzzleHttp\Promise\PromiseInterface headAsync(string $url, array|null $data = null, ?callable $success = null, ?callable $fail = null)
+ * @method static \GuzzleHttp\Promise\PromiseInterface optionsAsync(string $url, array|null $data = null, ?callable $success = null, ?callable $fail = null)
+ * @method static \GuzzleHttp\Pool multiAsync(array $promises, ?callable $success = null, ?callable $fail = null)
  * @method static void wait()
  */
 

@@ -11,6 +11,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Promise;
 use GuzzleHttp\Cookie\CookieJar;
 use GuzzleHttp\Exception\ConnectException;
+use Psr\Http\Message\UriInterface;
 
 /**
  * @method \yzh52521\EasyHttp\Response body()
@@ -76,6 +77,18 @@ class Request
      */
     protected $handlerStack;
 
+    protected const SENSITIVE_HEADERS = [
+        'authorization', 'proxy-authorization', 'cookie', 'set-cookie',
+        'x-api-key', 'api-key', 'x-auth-token', 'x-access-token',
+    ];
+
+    protected const SENSITIVE_KEYS = [
+        'password', 'passwd', 'pwd', 'secret', 'client_secret', 'token',
+        'access_token', 'refresh_token', 'id_token', 'api_key', 'apikey',
+        'authorization', 'cookie', 'session', 'sessionid', 'private_key',
+        'sign', 'signature',
+    ];
+
 
     /**
      * Request constructor.
@@ -120,7 +133,6 @@ class Request
         $this->isRemoveBodyFormat = false;
         $this->options            = [
             'http_errors' => false,
-            'verify'      => false
         ];
         return $this;
     }
@@ -141,7 +153,7 @@ class Request
         return $this;
     }
 
-    public function asMultipart(string $name, string $contents, string $filename = null, array $headers = [])
+    public function asMultipart(string $name, string $contents, ?string $filename = null, array $headers = [])
     {
         $this->bodyFormat = 'multipart';
 
@@ -366,44 +378,40 @@ class Request
             $requestBody = $request->getBody();
             $requestBody->rewind();
 
-            //请求头
-            $requestHeaders = [];
-
-            foreach ((array)$request->getHeaders() as $k => $vs) {
-                foreach ($vs as $v) {
-                    $requestHeaders[] = "$k: $v";
-                }
-            }
-
-            //响应头
-            $responseHeaders = [];
-
-            foreach ((array)$response->getHeaders() as $k => $vs) {
-                foreach ($vs as $v) {
-                    $responseHeaders[] = "$k: $v";
-                }
-            }
-
-            $uri  = $request->getUri();
+            $uri  = static::maskUri($request->getUri());
             $path = $uri->getPath();
 
             if ($query = $uri->getQuery()) {
                 $path .= '?' . $query;
             }
 
-            return sprintf(
-                "Request %s\n%s %s HTTP/%s\r\n%s\r\n\r\n%s\r\n--------------------\r\nHTTP/%s %s %s\r\n%s\r\n\r\n%s",
+            //请求头
+            $requestHeaders = static::formatHeaders($request->getHeaders());
+
+            $message = sprintf(
+                "Request %s\n%s %s HTTP/%s\r\n%s\r\n\r\n%s",
                 $uri,
                 $request->getMethod(),
                 $path,
                 $request->getProtocolVersion(),
                 join("\r\n", $requestHeaders),
-                $requestBody->getContents(),
+                static::maskBody($requestBody->getContents(), $request->getHeaderLine('Content-Type'))
+            );
+
+            if (!$response) {
+                return $message . "\r\n--------------------\r\n" . ($reason instanceof \Throwable ? $reason->getMessage() : (string) $reason);
+            }
+
+            //响应头
+            $responseHeaders = static::formatHeaders($response->getHeaders());
+
+            return $message . sprintf(
+                "\r\n--------------------\r\nHTTP/%s %s %s\r\n%s\r\n\r\n%s",
                 $response->getProtocolVersion(),
                 $response->getStatusCode(),
                 $response->getReasonPhrase(),
                 join("\r\n", $responseHeaders),
-                $response->getBody()->getContents()
+                static::maskBody((string) $response->getBody(), $response->getHeaderLine('Content-Type'))
             );
         });
         $this->handlerStack->push($logger);
@@ -412,7 +420,71 @@ class Request
         return $this;
     }
 
-    public function attach(string $name, string $contents, string $filename = null, array $headers = [])
+    protected static function maskUri(UriInterface $uri): UriInterface
+    {
+        $query = $uri->getQuery();
+
+        if ($query === '') {
+            return $uri;
+        }
+
+        parse_str($query, $params);
+
+        return $uri->withQuery(http_build_query(static::maskData($params)));
+    }
+
+    protected static function formatHeaders(array $headers): array
+    {
+        $lines = [];
+
+        foreach ($headers as $name => $values) {
+            $masked = in_array(strtolower($name), static::SENSITIVE_HEADERS, true);
+
+            foreach ((array) $values as $value) {
+                $lines[] = $name . ': ' . ($masked ? '***' : $value);
+            }
+        }
+
+        return $lines;
+    }
+
+    protected static function maskBody(string $body, string $contentType): string
+    {
+        if ($body === '') {
+            return $body;
+        }
+
+        if (stripos($contentType, 'json') !== false) {
+            $data = json_decode($body, true);
+
+            return is_array($data)
+                ? json_encode(static::maskData($data), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+                : $body;
+        }
+
+        if (stripos($contentType, 'x-www-form-urlencoded') !== false) {
+            parse_str($body, $data);
+
+            return http_build_query(static::maskData($data));
+        }
+
+        return $body;
+    }
+
+    protected static function maskData(array $data): array
+    {
+        foreach ($data as $key => $value) {
+            if (is_array($value)) {
+                $data[$key] = static::maskData($value);
+            } elseif (is_scalar($value) && in_array(strtolower((string) $key), static::SENSITIVE_KEYS, true)) {
+                $data[$key] = '***';
+            }
+        }
+
+        return $data;
+    }
+
+    public function attach(string $name, string $contents, ?string $filename = null, array $headers = [])
     {
         $this->options['multipart'] = array_filter([
             'name'     => $name,
@@ -477,56 +549,56 @@ class Request
         return $this->request('OPTIONS', $url, $data);
     }
 
-    public function getAsync(string $url, $query = null, callable $success = null, callable $fail = null)
+    public function getAsync(string $url, $query = null, ?callable $success = null, ?callable $fail = null)
     {
         is_callable($query) || $this->options['query'] = $query;
 
         return $this->requestAsync('GET', $url, $query, $success, $fail);
     }
 
-    public function postAsync(string $url, $data = null, callable $success = null, callable $fail = null)
+    public function postAsync(string $url, $data = null, ?callable $success = null, ?callable $fail = null)
     {
         is_callable($data) || $this->options[$this->bodyFormat] = $data;
 
         return $this->requestAsync('POST', $url, $data, $success, $fail);
     }
 
-    public function patchAsync(string $url, $data = null, callable $success = null, callable $fail = null)
+    public function patchAsync(string $url, $data = null, ?callable $success = null, ?callable $fail = null)
     {
         is_callable($data) || $this->options[$this->bodyFormat] = $data;
 
         return $this->requestAsync('PATCH', $url, $data, $success, $fail);
     }
 
-    public function putAsync(string $url, $data = null, callable $success = null, callable $fail = null)
+    public function putAsync(string $url, $data = null, ?callable $success = null, ?callable $fail = null)
     {
         is_callable($data) || $this->options[$this->bodyFormat] = $data;
 
         return $this->requestAsync('PUT', $url, $data, $success, $fail);
     }
 
-    public function deleteAsync(string $url, $data = null, callable $success = null, callable $fail = null)
+    public function deleteAsync(string $url, $data = null, ?callable $success = null, ?callable $fail = null)
     {
         is_callable($data) || $this->options[$this->bodyFormat] = $data;
 
         return $this->requestAsync('DELETE', $url, $data, $success, $fail);
     }
 
-    public function headAsync(string $url, $data = null, callable $success = null, callable $fail = null)
+    public function headAsync(string $url, $data = null, ?callable $success = null, ?callable $fail = null)
     {
         is_callable($data) || $this->options[$this->bodyFormat] = $data;
 
         return $this->requestAsync('HEAD', $url, $data, $success, $fail);
     }
 
-    public function optionsAsync(string $url, $data = null, callable $success = null, callable $fail = null)
+    public function optionsAsync(string $url, $data = null, ?callable $success = null, ?callable $fail = null)
     {
         is_callable($data) || $this->options[$this->bodyFormat] = $data;
 
         return $this->requestAsync('OPTIONS', $url, $data, $success, $fail);
     }
 
-    public function multiAsync(array $promises, callable $success = null, callable $fail = null)
+    public function multiAsync(array $promises, ?callable $success = null, ?callable $fail = null)
     {
         $count = count($promises);
 
@@ -643,7 +715,7 @@ class Request
     }
 
 
-    protected function requestAsync(string $method, string $url, $options = null, callable $success = null, callable $fail = null)
+    protected function requestAsync(string $method, string $url, $options = null, ?callable $success = null, ?callable $fail = null)
     {
         if (is_callable($options)) {
             $successCallback = $options;
@@ -692,10 +764,16 @@ class Request
 
     public function wait()
     {
-        if (!empty($this->promises)) {
-            \GuzzleHttp\Promise\Utils($this->promises)->wait();
-        }
+        $promises = $this->promises;
         $this->promises = [];
+
+        if (!empty($promises)) {
+            if (class_exists(\GuzzleHttp\Promise\Utils::class)) {
+                \GuzzleHttp\Promise\Utils::settle($promises)->wait();
+            } else {
+                \GuzzleHttp\Promise\settle($promises)->wait();
+            }
+        }
     }
 
     protected function response($response)

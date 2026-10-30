@@ -130,7 +130,7 @@ class Logger
      */
     protected function log(
         RequestInterface $request,
-        ResponseInterface $response = null,
+        ?ResponseInterface $response = null,
         $reason = null
     ) {
         if ($reason instanceof RequestException) {
@@ -164,7 +164,7 @@ class Logger
      */
     protected function getLogMessage(
         RequestInterface $request,
-        ResponseInterface $response = null,
+        ?ResponseInterface $response = null,
         $reason = null
     ) {
         if ($this->formatter instanceof MessageFormatter) {
@@ -185,7 +185,7 @@ class Logger
      *
      * @return string LogLevel
      */
-    protected function getLogLevel(ResponseInterface $response = null)
+    protected function getLogLevel(?ResponseInterface $response = null)
     {
         if ( ! $this->logLevel) {
             return $this->getDefaultLogLevel($response);
@@ -205,7 +205,7 @@ class Logger
      *
      * @return string LogLevel
      */
-    protected function getDefaultLogLevel(ResponseInterface $response = null) {
+    protected function getDefaultLogLevel(?ResponseInterface $response = null) {
         if ($response && $response->getStatusCode() >= 300) {
             return LogLevel::NOTICE;
         }
@@ -242,6 +242,10 @@ class Logger
             // Only log a rejected request if it hasn't already been logged.
             if ( ! $this->logRequests) {
                 $this->log($request, null, $reason);
+            }
+
+            if (class_exists(\GuzzleHttp\Promise\Create::class)) {
+                return \GuzzleHttp\Promise\Create::rejectionFor($reason);
             }
 
             return Promise\rejection_for($reason);
