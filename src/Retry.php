@@ -4,7 +4,7 @@ namespace yzh52521\EasyHttp;
 
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Psr7\Response;
+use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Exception\ConnectException;
 
@@ -21,8 +21,8 @@ class Retry
         return function (
             $retries,
             Request $request,
-            Response $response = null,
-            RequestException $exception = null
+            ?ResponseInterface $response = null,
+            ?\Throwable $exception = null
         ) use ($times) {
             // 超过最大重试次数，不再重试
             if ($retries >= $times) {
